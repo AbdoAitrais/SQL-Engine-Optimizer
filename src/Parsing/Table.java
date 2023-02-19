@@ -18,4 +18,9 @@ public class Table {
     public String getAlias() {
         return alias;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

@@ -1,20 +1,27 @@
 package Parsing;
 
+import DefinedExceptions.TableNotExistException;
+
 import java.util.*;
 import java.util.regex.*;
 
 public class Query {
     private static final String JOINTURE = "Jointure";
     private static final String SELECTION = "Selection";
-    private static final String OPERATORS_PATTERN = "<=|>=|<|>|=|!=";
+    private static final String OPERATORS_PATTERN = "\\s*(<=|>=|<|>|=|!=)\\s*";
     ArrayList<Column> columns;
     ArrayList<Table> tables;
+    Vector<Jointure> jointures;
+    Vector<Selection> selections;
     String whereClause;
+    Node root;
 
     public Query(ArrayList<Column> columns, ArrayList<Table> tables, String whereClause) {
         this.columns = columns;
         this.tables = tables;
         this.whereClause = whereClause;
+        this.jointures = new Vector<>();
+        this.selections = new Vector<>();
     }
 
     public static String identifyConditionType(String whereClause) {
@@ -59,12 +66,6 @@ public class Query {
 
         return order;
     }
-    public static void main(String[] args) {
-        String query1 = "age > 25 AND department = 'Sales' OR salary < 5000";
-        String query = "age > 25 AND department = 'Sales' AND salary < 5000";
-        ArrayList<String> order = extractLogicOrder(query);
-        System.out.println(order); // Output: [age > 25, AND, department = 'Sales', OR, salary < 5000]
-    }
 
     private Table getTableByAlias(String alias){
         for (Table t:tables) {
@@ -74,37 +75,66 @@ public class Query {
         return null;
     }
     private String getAliasFromCondition(String conditionColumn){
-
-        if (conditionColumn.contains(Optimizer.POINT_PATTERN)){
+//        System.out.println(conditionColumn);
+//        System.out.println(conditionColumn.contains("."));
+        if (conditionColumn.contains(".")){
             return conditionColumn.split(Optimizer.POINT_PATTERN)[0];
         }
         return "";
     }
-    public Node makesANDconditions(String conditions){
+    public void makesANDconditions(String conditions) throws IndexOutOfBoundsException, TableNotExistException {
         String[] equations = conditions.split("AND");
-        Stack<Node> nodes = new Stack<>();
+        ArrayList<Node> nodes = new ArrayList<>();
         for (String equation:equations) {
             if(identifyConditionType(equation).equals(JOINTURE)){
-                /// e.id = d.id
-                /// getTableByAlias(alias);
-                ArrayList<Table> table = new ArrayList<>();
+                Table table1 = getTableByAlias(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[0]));
+                Table table2 = getTableByAlias(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[1]));
                 int index = 0;
-                for (String filter:equation.split(OPERATORS_PATTERN)) {
-                    if (Objects.equals(getAliasFromCondition(filter), "")){
-                        //TODO: RESEARCH for the table that contains this column
-                    }else {
-                        table.add(getTableByAlias(getAliasFromCondition(filter)));
-                    }
-                }
-                Jointure jointure = new Jointure(equation);
-                jointure.left = new Relation(table.get(0));
-                jointure.right = new Relation(table.get(1));
-                //nodes.push()
+
+//                if (Objects.equals(getAliasFromCondition(filter), "")){
+//                    //TODO: RESEARCH for the table that contains this column
+//                }else {
+//                    table[index++] = getTableByAlias(getAliasFromCondition(filter));
+//                }
+
+                if (table1 == null || table2 == null)
+                    throw new TableNotExistException();
+                Relation relation1 = new Relation(table1);
+                Relation relation2 = new Relation(table2);
+                Jointure jointure = new Jointure(equation,relation1,relation2);
+                jointures.add(jointure);
             }else if (identifyConditionType(equation).equals(SELECTION)){
-                Selection selection = new Selection();
+                Table table = getTableByAlias(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[0]));
+                if (table == null)
+                    throw new TableNotExistException();
+                System.out.println(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[0]));
+                Relation relation = new Relation(table);
+                Selection selection = new Selection(equation,relation);
+                selections.add(selection);
             }
         }
-        return null;
+    }
+
+    public Node createTree() throws TableNotExistException {
+        makesANDconditions(whereClause);
+        Node origin;
+        if (jointures.size()>0){
+            origin = new Projection(jointures.get(0),columns);
+        }
+        else
+            origin = new Projection(selections.get(0),columns);
+
+//        for (int i = 0; i < operands.size(); i++) {
+//            Node currentOperand = operands.get(i);
+//            if (i+1 > operands.size()){
+//                Node nextOperand = operands.get(i+1);
+//                if (currentOperand.left == nextOperand.left)
+//                    currentOperand.left = nextOperand;
+//                else
+//                    currentOperand.right = nextOperand;
+//            }
+//        }
+        return origin;
     }
 
 }
