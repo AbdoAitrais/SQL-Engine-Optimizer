@@ -7,12 +7,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Optimizer {
-    private static final String SELECT_PATTERN = "\\s*SELECT\\s+(.*?)\\s+FROM";
-    private static final String FROM_PATTERN = "\\s*FROM\\s+(.*?)\\s+WHERE";
-    private static final String WHERE_PATTERN = "\\s*WHERE\\s+(.*)";
-    private static final String LIST_PATTERN = "(\\s*,\\s*)";
-    private static final String ALIAS_PATTERN = "(\\s*as\\s*)|(\\s+)";
-    private static final String POINT_PATTERN = "(\\.)";
+    public static final String SELECT_PATTERN = "\\s*SELECT\\s+(.*?)\\s+FROM";
+    public static final String FROM_PATTERN = "\\s*FROM\\s+(.*?)\\s+WHERE";
+    public static final String WHERE_PATTERN = "\\s*WHERE\\s+(.*)";
+    public static final String LIST_PATTERN = "(\\s*,\\s*)";
+    public static final String ALIAS_PATTERN = "(\\s*as\\s*)|(\\s+)";
+    public static final String POINT_PATTERN = "(\\.)";
     Query query;
 
     private String[] removeAlias(String name){
