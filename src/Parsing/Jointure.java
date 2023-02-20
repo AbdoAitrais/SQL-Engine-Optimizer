@@ -12,7 +12,7 @@ public class Jointure extends Node{
     }
     @Override
     public String toString() {
-        return "X" + " " + condition;
+        return "⟕" + " " + condition;
     }
 
     @Override

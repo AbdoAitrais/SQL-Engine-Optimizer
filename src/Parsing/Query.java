@@ -9,6 +9,8 @@ public class Query {
     private static final String JOINTURE = "Jointure";
     private static final String SELECTION = "Selection";
     private static final String OPERATORS_PATTERN = "\\s*(<=|>=|<|>|=|!=)\\s*";
+    private static final String OR_PATTERN = "\\s*(OR|or|oR|Or)\\s*";
+    private static final String AND_PATTERN = "\\s*(AND|and)\\s*";
     ArrayList<Column> columns;
     ArrayList<Table> tables;
     Vector<Jointure> jointures;
@@ -75,15 +77,14 @@ public class Query {
         return null;
     }
     private String getAliasFromCondition(String conditionColumn){
-//        System.out.println(conditionColumn);
-//        System.out.println(conditionColumn.contains("."));
+
         if (conditionColumn.contains(".")){
             return conditionColumn.split(Optimizer.POINT_PATTERN)[0];
         }
         return "";
     }
     public void makesANDconditions(String conditions) throws IndexOutOfBoundsException, TableNotExistException {
-        String[] equations = conditions.split("\\s*(AND|and)\\s*");
+        String[] equations = conditions.split(AND_PATTERN);
 
         for (String equation:equations) {
             if(identifyConditionType(equation).equals(JOINTURE)){
@@ -106,7 +107,6 @@ public class Query {
                 Table table = getTableByAlias(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[0]));
                 if (table == null)
                     throw new TableNotExistException();
-                System.out.println(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[0]));
                 Relation relation = new Relation(table);
                 Selection selection = new Selection(equation,relation);
                 selections.add(selection);
@@ -137,7 +137,6 @@ public class Query {
                 jointures.remove(nd2);
                 createTreeJoin(leaf.right);
             }
-
         }
         return leaf;
     }
@@ -149,8 +148,8 @@ public class Query {
         }
         return null;
     }
-     public Node createTree() throws TableNotExistException {
-        makesANDconditions(whereClause);
+     public Node createAndNodes(String andConditions) throws TableNotExistException {
+        makesANDconditions(andConditions);
         Node origin = null;
         if (!selections.isEmpty()){
             origin = createTreeSelection(0);
@@ -161,10 +160,31 @@ public class Query {
 
             if (!jointures.isEmpty())
                 temp.left = createTreeJoin(jointures.get(0));
+            jointures.clear();
+            selections.clear();
             return origin;
         }
-         return createTreeJoin(jointures.get(0));
+        origin = jointures.get(0);
+        jointures.clear();
+         return origin;
      }
+    public void createTree() throws TableNotExistException {
+        String[] orSplitConditions = whereClause.split(OR_PATTERN);
+        ArrayList<Node> nodes = new ArrayList<>();
+        for (String cond:orSplitConditions) {
+            nodes.add(createAndNodes(cond));
+        }
+        root = new Projection(unifyNodes(nodes.get(0),nodes),columns);
+    }
+    private Node unifyNodes(Node leaf,ArrayList<Node> nodes){
+        Node temp = null;
+        if (nodes.size() > 1){
+            temp = nodes.get(1);
+            nodes.remove(temp);
+            return unifyNodes(new Union(leaf,temp),nodes);
+        }
+        return leaf;
+    }
     private void showNode(Node leaf,int niveau_courant)
     {
         //indice pour faire les espaces entre les niveaux
