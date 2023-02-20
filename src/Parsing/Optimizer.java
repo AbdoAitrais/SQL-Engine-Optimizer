@@ -7,11 +7,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Optimizer {
-    public static final String SELECT_PATTERN = "\\s*SELECT\\s+(.*?)\\s+FROM";
-    public static final String FROM_PATTERN = "\\s*FROM\\s+(.*?)\\s+WHERE";
-    public static final String WHERE_PATTERN = "\\s*WHERE\\s+(.*)";
+    public static final String SELECT_PATTERN = "(?i)\\s*SELECT\\s+(.*?)\\s+FROM";
+    public static final String FROM_PATTERN = "(?i)\\s*FROM\\s+(.*?)\\s+WHERE";
+    public static final String WHERE_PATTERN = "(?i)\\s*WHERE\\s+(.*)";
     public static final String LIST_PATTERN = "(\\s*,\\s*)";
-    public static final String ALIAS_PATTERN = "(\\s*as\\s*)|(\\s+)";
+    public static final String ALIAS_PATTERN = "(?i)(\\s*as\\s*)|(\\s+)";
     public static final String POINT_PATTERN = "(\\.)";
     Query query;
 

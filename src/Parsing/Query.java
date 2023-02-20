@@ -9,8 +9,8 @@ public class Query {
     private static final String JOINTURE = "Jointure";
     private static final String SELECTION = "Selection";
     private static final String OPERATORS_PATTERN = "\\s*(<=|>=|<|>|=|!=)\\s*";
-    private static final String OR_PATTERN = "\\s*(OR|or|oR|Or)\\s*";
-    private static final String AND_PATTERN = "\\s*(AND|and)\\s*";
+    private static final String OR_PATTERN = "(?i)\\s*(OR)\\s*";
+    private static final String AND_PATTERN = "(?i)\\s*(AND)\\s*";
     ArrayList<Column> columns;
     ArrayList<Table> tables;
     Vector<Jointure> jointures;
