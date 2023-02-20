@@ -13,6 +13,7 @@ public class Query {
     ArrayList<Table> tables;
     Vector<Jointure> jointures;
     Vector<Selection> selections;
+    Vector<Node> operands;
     String whereClause;
     Node root;
 
@@ -20,6 +21,7 @@ public class Query {
         this.columns = columns;
         this.tables = tables;
         this.whereClause = whereClause;
+        this.operands = new Vector<>();
         this.jointures = new Vector<>();
         this.selections = new Vector<>();
     }
@@ -103,6 +105,7 @@ public class Query {
                 Relation relation2 = new Relation(table2);
                 Jointure jointure = new Jointure(equation,relation1,relation2);
                 jointures.add(jointure);
+                operands.add(jointure);
             }else if (identifyConditionType(equation).equals(SELECTION)){
                 Table table = getTableByAlias(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[0]));
                 if (table == null)
@@ -111,6 +114,7 @@ public class Query {
                 Relation relation = new Relation(table);
                 Selection selection = new Selection(equation,relation);
                 selections.add(selection);
+                operands.add(selection);
             }
         }
     }
@@ -121,8 +125,22 @@ public class Query {
         if (jointures.size()>0){
             origin = new Projection(jointures.get(0),columns);
         }
-        else
-            origin = new Projection(selections.get(0),columns);
+        else {
+            origin = new Projection(selections.get(0), columns);
+        }
+
+        for (int i = 0; i < operands.size(); i++) {
+            Node currentOperand = operands.get(i);
+            Relation relation1 = (Relation) operands.get(i).left;
+            if (i+1 > operands.size()){
+                Node nextOperand = operands.get(i+1);
+                Relation relation2 = (Relation) operands.get(i).left;
+                if (relation1 == relation2)
+                    currentOperand.left = nextOperand;
+                else
+                    currentOperand.right = nextOperand;
+            }
+        }
 
 //        for (int i = 0; i < operands.size(); i++) {
 //            Node currentOperand = operands.get(i);
@@ -136,5 +154,38 @@ public class Query {
 //        }
         return origin;
     }
+    private void showNode(Node leaf,int niveau_courant)
+    {
+        //indice pour faire les espaces entre les niveaux
+        int ind;
+        //s'il y a des éléments dans l'arbre
+        if(leaf != null)
+        {
+            //on affiche d'abord l'arbre droit
+            showNode(leaf.right,niveau_courant+1);
+            // affichage des espaces entre les niveaux de l'arbre
+            for (ind = 0; ind < niveau_courant; ind++)
+                System.out.print("      ");
+            //affichage du noeud courant
+            System.out.println(leaf);
+            //on affiche l'arbre gauche
+            showNode(leaf.left,niveau_courant+1);
+        } else {
+            for (ind = 0; ind < niveau_courant; ind++)
+                System.out.print("      ");
+            System.out.println("~");
+        }
+    }
 
+    void showGraphic()
+    {
+        if(root != null)
+        {
+            System.out.print("\nL'AFFICHAGE DE L'arbre\n");
+            //appel de la fonction afficher_noeud avec un niveau
+            //courant=0
+            showNode(root,0);
+            System.out.print("\n\n");
+        }
+    }
 }
