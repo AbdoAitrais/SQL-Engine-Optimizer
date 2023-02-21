@@ -92,8 +92,8 @@ public class Query {
 
         for (String equation:equations) {
             if(identifyConditionType(equation).equals(JOINTURE)){
-                Table table1 = getTableByAlias(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[0]));
-                Table table2 = getTableByAlias(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[1]));
+                Table table1 = getTableByAlias(getAliasFromCondition(equation.split(OPERATORS_PATTERN)[0]));
+                Table table2 = getTableByAlias(getAliasFromCondition(equation.split(OPERATORS_PATTERN)[1]));
 
 //                if (Objects.equals(getAliasFromCondition(filter), "")){
 //                    //TODO: RESEARCH for the table that contains this column
@@ -108,11 +108,16 @@ public class Query {
                 Jointure jointure = new Jointure(equation,relation1,relation2);
                 jointures.add(jointure);
             }else if (identifyConditionType(equation).equals(SELECTION)){
-                Table table = getTableByAlias(getAliasFromCondition(equation.trim().split(OPERATORS_PATTERN)[0]));
+                Table table = getTableByAlias(getAliasFromCondition(equation.split(OPERATORS_PATTERN)[0]));
                 if (table == null)
                     throw new TableNotExistException();
                 Relation relation = new Relation(table);
-                Selection selection = new Selection(equation,relation);
+                String cond;
+                if (equation.split("\\.").length > 1)
+                    cond = equation.split("\\.")[1];
+                else
+                    cond = equation;
+                Selection selection = new Selection(cond,relation);
                 selections.add(selection);
             }
         }
