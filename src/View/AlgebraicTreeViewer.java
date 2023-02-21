@@ -7,7 +7,8 @@ import BusinessObject.Table;
 import DefinedExceptions.InvalidSQLException;
 import DefinedExceptions.TableNotExistException;
 
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
 
 public class AlgebraicTreeViewer {
     public static void main(String[] args) throws InvalidSQLException, TableNotExistException {
@@ -32,6 +33,7 @@ public class AlgebraicTreeViewer {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         frame.pack();
+        frame.setSize(700,500);
         frame.setVisible(true);
     }
 }
