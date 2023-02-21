@@ -54,18 +54,18 @@ public class AlgebraicTreePanel extends JPanel {
         }
 
         if (node.getLeft() != null) {
-            int childX = x - xOffset;
+            int childX = (int) (x - (xOffset*1.3));
             int childY = y + 50;
             g.drawLine(x, y + 5, childX, childY - 15);
-            drawNode(g, node.getLeft(), childX, childY, (int) xOffset);
+            drawNode(g, node.getLeft(), childX, childY, (int) (xOffset/1.1));
         }
 
         // Draw the right child node, if it exists.
         if (node.getRight() != null) {
-            int childX = x + xOffset;
+            int childX = (int) (x + (xOffset*1.3));
             int childY = y + 50;
             g.drawLine(x, y + 5, childX, childY - 15);
-            drawNode(g, node.getRight(), childX, childY, (int) xOffset);
+            drawNode(g, node.getRight(), childX, childY, (int) (xOffset/1.1));
         }
     }
 

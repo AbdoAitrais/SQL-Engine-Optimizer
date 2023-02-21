@@ -136,6 +136,11 @@ public class Query {
         if (jointures.size() > 1){
             Jointure nd1 = findJointureByTable(((Relation) leaf.left).table);
             Jointure nd2 = findJointureByTable(((Relation) leaf.right).table);
+            if (nd1 == null && nd2 == null){
+                Node temp = jointures.get(1);
+                jointures.remove(temp);
+                return new Cartesianproduct(leaf,temp);
+            }
             if (nd1 != null){
                 leaf.left = nd1;
                 jointures.remove(nd1);
