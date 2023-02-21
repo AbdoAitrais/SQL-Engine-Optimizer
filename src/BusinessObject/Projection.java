@@ -1,4 +1,4 @@
-package Parsing;
+package BusinessObject;
 
 import java.util.ArrayList;
 

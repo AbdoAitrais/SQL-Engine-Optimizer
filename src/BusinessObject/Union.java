@@ -1,4 +1,4 @@
-package Parsing;
+package BusinessObject;
 
 public class Union extends Node{
     public Union(Node left, Node right) {

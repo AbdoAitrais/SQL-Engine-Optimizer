@@ -1,4 +1,4 @@
-package Parsing;
+package BusinessObject;
 
 public class Relation extends Node {
     Table table;

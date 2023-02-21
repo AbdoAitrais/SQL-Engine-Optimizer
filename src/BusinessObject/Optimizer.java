@@ -1,4 +1,4 @@
-package Parsing;
+package BusinessObject;
 
 import DefinedExceptions.InvalidSQLException;
 
@@ -14,6 +14,10 @@ public class Optimizer {
     public static final String ALIAS_PATTERN = "(?i)(\\s*as\\s*)|(\\s+)";
     public static final String POINT_PATTERN = "(\\.)";
     Query query;
+
+    public Query getQuery() {
+        return query;
+    }
 
     private String[] removeAlias(String name){
         return name.split(ALIAS_PATTERN);

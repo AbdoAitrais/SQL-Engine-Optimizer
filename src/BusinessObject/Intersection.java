@@ -1,4 +1,4 @@
-package Parsing;
+package BusinessObject;
 
 public class Intersection extends Node {
     @Override

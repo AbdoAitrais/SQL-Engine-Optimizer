@@ -1,4 +1,4 @@
-package Parsing;
+package BusinessObject;
 
 import DefinedExceptions.TableNotExistException;
 
@@ -9,14 +9,18 @@ public class Query {
     private static final String JOINTURE = "Jointure";
     private static final String SELECTION = "Selection";
     private static final String OPERATORS_PATTERN = "\\s*(<=|>=|<|>|=|!=)\\s*";
-    private static final String OR_PATTERN = "(?i)\\s*(OR)\\s*";
-    private static final String AND_PATTERN = "(?i)\\s*(AND)\\s*";
+    private static final String OR_PATTERN = "(?i)\\s+(OR)\\s+";
+    private static final String AND_PATTERN = "(?i)\\s+(AND)\\s+";
     ArrayList<Column> columns;
     ArrayList<Table> tables;
     Vector<Jointure> jointures;
     static Vector<Selection> selections;
     String whereClause;
     Node root;
+
+    public Node getRoot() {
+        return root;
+    }
 
     public Query(ArrayList<Column> columns, ArrayList<Table> tables, String whereClause) {
         this.columns = columns;
@@ -208,7 +212,7 @@ public class Query {
         }
     }
 
-    void showGraphic()
+    public void showGraphic()
     {
         if(root != null)
         {

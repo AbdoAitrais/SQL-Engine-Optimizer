@@ -1,4 +1,4 @@
-package Parsing;
+package BusinessObject;
 
 public class Selection extends Node{
     String condition;

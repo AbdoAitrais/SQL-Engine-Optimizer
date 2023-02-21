@@ -1,4 +1,4 @@
-package Parsing;
+package BusinessObject;
 
 public abstract class Node {
 
@@ -7,6 +7,14 @@ public abstract class Node {
     public Node(){}
     public Node(Node left) {
         this.left = left;
+    }
+
+    public Node getLeft() {
+        return left;
+    }
+
+    public Node getRight() {
+        return right;
     }
 
     public Node(Node left, Node right) {
