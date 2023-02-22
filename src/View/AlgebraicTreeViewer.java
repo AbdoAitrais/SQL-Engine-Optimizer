@@ -24,7 +24,7 @@ public class AlgebraicTreeViewer {
 
 
         optimizer.getQuery().createTree();
-
+        //optimizer.getQuery().showGraphic();
         // Create the panel to display the algebraic tree.
         AlgebraicTreePanel panel = new AlgebraicTreePanel(optimizer.getQuery().getRoot());
 

@@ -124,12 +124,16 @@ public class Query {
     }
 
     public Node createTreeSelection(int index) {
-        if (index >= selections.size()) {
-            return null;
+        Node root = selections.get(0);
+        Node temp = root;
+
+        //System.out.println(selections.get(index));
+        for (int i = 0; i < selections.size(); i++) {
+            temp = selections.get(i);
+            if (selections.size() != i+1)
+                temp = selections.get(i+1);
         }
 
-        Node root = new Selection(selections.get(index).condition);
-        root.left = createTreeSelection(index + 1);
         return root;
     }
     public Node createTreeJoin(Node leaf) throws TableNotExistException {
@@ -165,22 +169,28 @@ public class Query {
      public Node createAndNodes(String andConditions) throws TableNotExistException {
         makesANDconditions(andConditions);
         Node origin = null;
+        if (!selections.isEmpty() && jointures.isEmpty()){
+            origin = createTreeSelection(0);
+
+        }
         if (!selections.isEmpty()){
             origin = createTreeSelection(0);
             Node temp = origin;
 
-            while (temp.left != null)
-                temp = temp.left;
 
-            if (!jointures.isEmpty())
+
+            if (!jointures.isEmpty()){
+                while (temp.left != null)
+                    temp = temp.left;
                 temp.left = createTreeJoin(jointures.get(0));
+            }
             jointures.clear();
             selections.clear();
             return origin;
         }
         origin = jointures.get(0);
         jointures.clear();
-         return origin;
+        return origin;
      }
     public void createTree() throws TableNotExistException {
         String[] orSplitConditions = whereClause.split(OR_PATTERN);

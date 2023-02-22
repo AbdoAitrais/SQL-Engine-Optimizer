@@ -16,7 +16,7 @@ public class AlgebraicTreePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // Draw the tree recursively starting from the root node.
-        drawNode(g, root, getWidth() / 2, 30, getWidth() / 4);
+        drawNode(g, root, getWidth() / 2, 30, getWidth() / 6);
     }
 
 //    private void drawNode2(Graphics g, Node node, int x, int y, int xOffset) {
@@ -54,7 +54,7 @@ public class AlgebraicTreePanel extends JPanel {
         }
 
         if (node.getLeft() != null) {
-            int childX = (int) (x - (xOffset*1.3));
+            int childX = (int) (x - (xOffset*2));
             int childY = y + 50;
             g.drawLine(x, y + 5, childX, childY - 15);
             drawNode(g, node.getLeft(), childX, childY, (int) (xOffset/1.1));
@@ -62,7 +62,7 @@ public class AlgebraicTreePanel extends JPanel {
 
         // Draw the right child node, if it exists.
         if (node.getRight() != null) {
-            int childX = (int) (x + (xOffset*1.3));
+            int childX = (int) (x + (xOffset*2));
             int childY = y + 50;
             g.drawLine(x, y + 5, childX, childY - 15);
             drawNode(g, node.getRight(), childX, childY, (int) (xOffset/1.1));
