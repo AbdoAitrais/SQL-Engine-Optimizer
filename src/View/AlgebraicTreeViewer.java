@@ -4,8 +4,7 @@ import BusinessObject.Column;
 import BusinessObject.Node;
 import BusinessObject.Optimizer;
 import BusinessObject.Table;
-import DefinedExceptions.InvalidSQLException;
-import DefinedExceptions.TableNotExistException;
+import DefinedExceptions.*;
 
 import javax.swing.*;
 import java.awt.*;

@@ -2,6 +2,7 @@ package BusinessObject;
 
 public class Selection extends Node{
     String condition;
+    Table table;
 
     public Selection(String condition) {
         this.condition = condition;
