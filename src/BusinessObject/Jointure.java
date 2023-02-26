@@ -12,9 +12,10 @@ public class Jointure extends Node{
         super(table1,table2);
         this.condition = condition;
     }
+    
     @Override
     public String toString() {
-        return "⟕" + " " + condition;
+        return "∞" ;
     }
 
     @Override
