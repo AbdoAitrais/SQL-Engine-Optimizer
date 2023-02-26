@@ -11,7 +11,8 @@ import java.io.BufferedReader;
         import java.util.ArrayList;
         import java.util.List;
 
-        import BusinessObject.Table;
+import BusinessObject.Selection;
+import BusinessObject.Table;
 
 public class Dictionnary {
 
@@ -53,17 +54,16 @@ public class Dictionnary {
 
     }
 
+    public double calculateFBMT(){
+        return (double) ((TailleBloc - TailleDescripteurBloc)/ tailleLigneT);
+    }
 
+    public double calculateBT(){
+        return (double) (Nt / FBT);
+    }
 
-//Source: https://stackoverflow.com/questions/2049380
-
-
-
-
-
-
-
-
-
+    public double calucalteFSelectivity(Selection selection){
+        return 0;
+    }
 
 }

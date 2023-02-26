@@ -108,12 +108,11 @@ public class Query {
 
                 if (joinTables[0] == null || joinTables[1] == null)
                     throw new TableNotExistException();
-                Relation relation1 = new Relation(joinTables[0]);
-                Relation relation2 = new Relation(joinTables[1]);
-                Jointure jointure = new Jointure(equation,relation1,relation2);
+                Jointure jointure = new Jointure(equation,joinTables[0],joinTables[1]);
                 jointures.add(jointure);
             }else if (identifyConditionType(equation).equals(SELECTION)){
                 String operand = equation.split(OPERATORS_PATTERN)[0];
+                String value = equation.split(OPERATORS_PATTERN)[1];
                 Table table = null;
                 table = getTableFromOperand(operand);
                 if (table == null)
@@ -124,29 +123,38 @@ public class Query {
                     cond = equation.split("\\.")[1];
                 else
                     cond = equation;
-                Selection selection = new Selection(cond,relation);
+                Selection selection = new Selection(cond,table,operand,value);
                 selections.add(selection);
             }
         }
     }
 
+//    public Node createTreeSelection(int index) {
+//        Node root = selections.get(0);
+//        Node temp = root;
+//
+//        //System.out.println(selections.get(index));
+//        for (int i = 1; i < selections.size(); i++) {
+//            temp.left = selections.get(i);
+//            if (selections.size() != i+1)
+//                temp.left = selections.get(i+1);
+//        }
+//
+//        return root;
+//    }
     public Node createTreeSelection(int index) {
-        Node root = selections.get(0);
-        Node temp = root;
-
-        //System.out.println(selections.get(index));
-        for (int i = 0; i < selections.size(); i++) {
-            temp = selections.get(i);
-            if (selections.size() != i+1)
-                temp = selections.get(i+1);
+        if (index >= selections.size()) {
+            return selections.get(index-1).left;
         }
 
+        Node root = new Selection(selections.get(index).condition);
+        root.left = createTreeSelection(index + 1);
         return root;
     }
     public Node createTreeJoin(Node leaf) throws TableNotExistException {
         if (jointures.size() > 1){
-            Jointure nd1 = findJointureByTable(((Relation) leaf.left).table);
-            Jointure nd2 = findJointureByTable(((Relation) leaf.right).table);
+            Jointure nd1 = findJointureByTable(((Jointure) leaf).table1);
+            Jointure nd2 = findJointureByTable(((Jointure) leaf).table2);
             if (nd1 == null && nd2 == null){
                 Node temp = jointures.get(1);
                 jointures.remove(temp);
@@ -167,8 +175,8 @@ public class Query {
     }
     private Jointure findJointureByTable(Table table){
         for (int i = 1; i < jointures.size(); i++) {
-            if (Objects.equals(table.getName(), ((Relation) jointures.get(i).left).table.getName())
-                    || Objects.equals(table.getName(), ((Relation) jointures.get(i).right).table.getName()))
+            if (Objects.equals(table.getName(), (jointures.get(i)).table1.getName())
+                    || Objects.equals(table.getName(), (jointures.get(i)).table2.getName()))
                 return jointures.get(i);
         }
         return null;
@@ -184,11 +192,11 @@ public class Query {
             origin = createTreeSelection(0);
             Node temp = origin;
 
-
-
             if (!jointures.isEmpty()){
-                while (temp.left != null)
+                while (temp.left.left != null){
                     temp = temp.left;
+                }
+
                 temp.left = createTreeJoin(jointures.get(0));
             }
             jointures.clear();

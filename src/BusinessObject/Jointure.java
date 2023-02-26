@@ -8,8 +8,10 @@ public class Jointure extends Node{
     public Jointure(String condition) {
         this.condition = condition;
     }
-    public Jointure(String condition, Node table1, Node table2) {
-        super(table1,table2);
+    public Jointure(String condition, Table table1, Table table2) {
+        super(new Relation(table1),new Relation(table2));
+        this.table1 = table1;
+        this.table2 = table2;
         this.condition = condition;
     }
     
