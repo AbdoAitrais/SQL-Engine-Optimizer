@@ -2,7 +2,7 @@ package BusinessObject;
 
 import java.util.List;
 
-public class Equivalence {
+public class Transformer {
     
 
     List<Node> Trees;

@@ -41,38 +41,6 @@ public class Query {
         }
     }
 
-    public static ArrayList<String> extractLogicOrder(String query) {
-        ArrayList<String> order = new ArrayList<>();
-
-        String regex = "(\\s+(AND|OR)\\s+)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(query);
-
-        int previousIndex = 0;
-        while (matcher.find()) {
-            int startIndex = matcher.start();
-            int endIndex = matcher.end();
-            String operator = matcher.group(2);
-
-            // Add any characters before the logical operator to the list
-            if (previousIndex < startIndex) {
-                order.add(query.substring(previousIndex, startIndex));
-            }
-
-            // Add the logical operator to the list
-            order.add(operator);
-
-            previousIndex = endIndex;
-        }
-
-        // Add any characters after the last logical operator to the list
-        if (previousIndex < query.length()) {
-            order.add(query.substring(previousIndex));
-        }
-
-        return order;
-    }
-
     private Table getTableByAlias(String alias){
         for (Table t:tables) {
             if (Objects.equals(t.getAlias(), alias) || Objects.equals(t.getName(), alias))
@@ -117,7 +85,6 @@ public class Query {
                 table = getTableFromOperand(operand);
                 if (table == null)
                     throw new TableNotExistException();
-                Relation relation = new Relation(table);
                 String cond;
                 if (equation.split("\\.").length > 1)
                     cond = equation.split("\\.")[1];
@@ -129,19 +96,6 @@ public class Query {
         }
     }
 
-//    public Node createTreeSelection(int index) {
-//        Node root = selections.get(0);
-//        Node temp = root;
-//
-//        //System.out.println(selections.get(index));
-//        for (int i = 1; i < selections.size(); i++) {
-//            temp.left = selections.get(i);
-//            if (selections.size() != i+1)
-//                temp.left = selections.get(i+1);
-//        }
-//
-//        return root;
-//    }
     public Node createTreeSelection(int index) {
         if (index >= selections.size()) {
             return selections.get(index-1).left;
