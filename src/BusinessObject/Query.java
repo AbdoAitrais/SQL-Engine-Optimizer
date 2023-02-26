@@ -1,6 +1,6 @@
 package BusinessObject;
 
-import DefinedExceptions.TableNotExistException;
+import DefinedExceptions.*;
 
 import java.util.*;
 import java.util.regex.*;
@@ -75,7 +75,7 @@ public class Query {
 
     private Table getTableByAlias(String alias){
         for (Table t:tables) {
-            if (Objects.equals(t.getAlias(), alias))
+            if (Objects.equals(t.getAlias(), alias) || Objects.equals(t.getName(), alias))
                 return t;
         }
         return null;
@@ -87,28 +87,35 @@ public class Query {
         }
         return "";
     }
+    private Table getTableFromOperand(String operand){
+        if (Objects.equals(getAliasFromCondition(operand), "")) {
+            return Catalog.getTableByColumnName(operand);
+        }else {
+            return getTableByAlias(getAliasFromCondition(operand));
+        }
+    }
     public void makesANDconditions(String conditions) throws IndexOutOfBoundsException, TableNotExistException {
         String[] equations = conditions.split(AND_PATTERN);
 
         for (String equation:equations) {
             if(identifyConditionType(equation).equals(JOINTURE)){
-                Table table1 = getTableByAlias(getAliasFromCondition(equation.split(OPERATORS_PATTERN)[0]));
-                Table table2 = getTableByAlias(getAliasFromCondition(equation.split(OPERATORS_PATTERN)[1]));
+                int index = 0;
+                Table[] joinTables = new Table[2];
+                String[] operands = equation.split(OPERATORS_PATTERN);
+                for (String operand:operands) {
+                    joinTables[index++] = getTableFromOperand(operand);
+                }
 
-//                if (Objects.equals(getAliasFromCondition(filter), "")){
-//                    //TODO: RESEARCH for the table that contains this column
-//                }else {
-//                    table[index++] = getTableByAlias(getAliasFromCondition(filter));
-//                }
-
-                if (table1 == null || table2 == null)
+                if (joinTables[0] == null || joinTables[1] == null)
                     throw new TableNotExistException();
-                Relation relation1 = new Relation(table1);
-                Relation relation2 = new Relation(table2);
+                Relation relation1 = new Relation(joinTables[0]);
+                Relation relation2 = new Relation(joinTables[1]);
                 Jointure jointure = new Jointure(equation,relation1,relation2);
                 jointures.add(jointure);
             }else if (identifyConditionType(equation).equals(SELECTION)){
-                Table table = getTableByAlias(getAliasFromCondition(equation.split(OPERATORS_PATTERN)[0]));
+                String operand = equation.split(OPERATORS_PATTERN)[0];
+                Table table = null;
+                table = getTableFromOperand(operand);
                 if (table == null)
                     throw new TableNotExistException();
                 Relation relation = new Relation(table);

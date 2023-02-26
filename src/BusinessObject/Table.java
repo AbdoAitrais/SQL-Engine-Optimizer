@@ -1,11 +1,20 @@
 package BusinessObject;
 
+import java.util.Objects;
+
 public class Table {
     private String name;
     private String alias;
+    private Column[] columns;
     public Table(String name, String alias) {
         this.name = name;
         this.alias = alias;
+    }
+
+    public Table(String name, String alias, Column[] columns) {
+        this.name = name;
+        this.alias = alias;
+        this.columns = columns;
     }
 
     public String getName() {
@@ -14,6 +23,13 @@ public class Table {
 
     public String getAlias() {
         return alias;
+    }
+    public boolean findColumn(String colName){
+        for (Column column:columns) {
+            if (Objects.equals(column.getName(), colName))
+                return true;
+        }
+        return false;
     }
 
     @Override

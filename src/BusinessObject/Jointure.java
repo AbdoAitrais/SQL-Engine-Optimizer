@@ -2,6 +2,8 @@ package BusinessObject;
 
 public class Jointure extends Node{
     String condition;
+    Table table1;
+    Table table2;
 
     public Jointure(String condition) {
         this.condition = condition;
