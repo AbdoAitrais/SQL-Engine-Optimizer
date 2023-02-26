@@ -17,9 +17,11 @@ public class Dictionnary {
 
     static int TailleBloc = 2;
     final static int TailleDescripteurBloc = 3;
+    final double TempsTrans = 0.1;
     Table table;
     int Nt;
-    int TailleLigneT;
+    int tailleLigneT;
+
     int FBT;
     List<ColumnMeta> metaColumn = new ArrayList<>();
 
