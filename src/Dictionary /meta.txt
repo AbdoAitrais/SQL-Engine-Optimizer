@@ -1,4 +1,0 @@
-table   Nt  TailleLigneT    FBt column1 card(col1) min() max()
-
-table1  1000    40  4 col1,100,5,20 col1,car2,min2,max2 
-
