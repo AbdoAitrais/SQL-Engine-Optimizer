@@ -34,7 +34,7 @@ public class Query {
         String[] words = whereClause.split(OPERATORS_PATTERN);
         String lastWord = words[words.length - 1].trim();
 
-        if (lastWord.matches("^\".*\"$") || lastWord.matches("^\\d+$")) {
+        if (lastWord.matches("^\".*\"$")  || lastWord.matches("^\'.*\'$")  || lastWord.matches("^\\d+$")) {
             return SELECTION;
         } else {
             return JOINTURE;
