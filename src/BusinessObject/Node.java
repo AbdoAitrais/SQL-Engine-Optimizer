@@ -1,7 +1,6 @@
 package BusinessObject;
 
 public abstract class Node {
-
     Node left;
     Node right;
     public Node(){}

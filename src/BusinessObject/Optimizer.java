@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 public class Optimizer {
     public static final String SELECT_PATTERN = "(?i)\\s*SELECT\\s+(.*?)\\s+FROM";
+    public static final String FROM_NO_WHERE_PATTERN = "(?i)\\s*FROM\\s+(.*?)\\s+";
     public static final String FROM_PATTERN = "(?i)\\s*FROM\\s+(.*?)\\s+WHERE";
     public static final String WHERE_PATTERN = "(?i)\\s*WHERE\\s+(.*)";
     public static final String LIST_PATTERN = "(\\s*,\\s*)";

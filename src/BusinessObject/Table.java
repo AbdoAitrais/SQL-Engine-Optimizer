@@ -10,6 +10,11 @@ public class Table {
         this.name = name;
         this.alias = alias;
     }
+    public Table(Table table){
+        this.name = table.name;
+        this.alias = table.alias;
+        this.columns = table.columns;
+    }
 
     public Table(String name, String alias, Column[] columns) {
         this.name = name;

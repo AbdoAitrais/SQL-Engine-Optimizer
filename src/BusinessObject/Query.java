@@ -85,12 +85,7 @@ public class Query {
                 table = getTableFromOperand(operand);
                 if (table == null)
                     throw new TableNotExistException();
-                String cond;
-                if (equation.split("\\.").length > 1)
-                    cond = equation.split("\\.")[1];
-                else
-                    cond = equation;
-                Selection selection = new Selection(cond,table,operand,value);
+                Selection selection = new Selection(equation,table,operand,value);
                 selections.add(selection);
             }
         }
