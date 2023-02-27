@@ -161,7 +161,26 @@ public class Query {
         jointures.clear();
         return origin;
      }
-    public void createTree() throws TableNotExistException {
+//     private Node noWhereClause(){
+//
+//     }
+
+//    public Node createTreeWithoutWhere(Node leaf){
+//        if (tables.size() > 1){
+//            Relation nd1 = new Relation(((Relation) leaf).table);
+//            Relation nd2 = new Relation(tables.get(1));
+//            leaf.left = nd1;
+//            jointures.remove(nd1);
+//            createTreeWithoutWhere(leaf.left);
+//            leaf.right = nd2;
+//            jointures.remove(nd2);
+//            createTreeWithoutWhere(leaf.right);
+//        }
+//        return leaf;
+//    }
+    public void createTree() throws TableNotExistException, InvalidSQLException {
+        if (whereClause == null)
+            throw new InvalidSQLException();
         String[] orSplitConditions = whereClause.split(OR_PATTERN);
         ArrayList<Node> nodes = new ArrayList<>();
         for (String cond:orSplitConditions) {

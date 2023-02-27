@@ -13,8 +13,8 @@ public class AlgebraicTreeViewer {
     public static void main(String[] args) throws InvalidSQLException, TableNotExistException {
         Optimizer optimizer = new Optimizer();
         // String query = "SELECT a.column1 as c, * FROM table1 as t1, table2 t2, table3 t3, table4 t4 WHERE t1.column1 = t2.column3 AND t1.column4 = t3.column3 AND t1.column = 55";
-        //String query = "SELECT * FROM Al as  A,Bl as B , Cib C, Derb D where A.id = B.id and B.age = 5 AND B.id = C.id OR C.name > 18 OR A.name = 56";
-        String query =  "SELECT * from employees Al where employee_name='whoever'";
+        String query = "SELECT * FROM Al as  A,Bl as B , Cib C, Derb D where A.id = B.id and B.age = 5 AND B.id = C.id OR C.name > 18 OR A.name = 56";
+        //String query =  "SELECT * from employees Al where employee_id = 1";
         optimizer.queryComponentExtraction(query);
 
 
