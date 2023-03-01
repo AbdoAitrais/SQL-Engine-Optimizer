@@ -15,6 +15,7 @@ public class Catalog {
                         new Column("department_id","dep_id"),
                         new Column("department_name","dep_name")
                 }),
+            
             new Table("Countries","cntry",
                 new Column[]{
                         new Column("country_name","cntry_name")

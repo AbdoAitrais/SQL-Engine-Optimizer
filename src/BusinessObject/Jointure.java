@@ -17,7 +17,7 @@ public class Jointure extends Node{
     
     @Override
     public String toString() {
-        return "∞" ;
+        return "⋈" ;
     }
 
     @Override

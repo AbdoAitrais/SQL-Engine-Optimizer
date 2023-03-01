@@ -9,17 +9,27 @@ public class Projection extends Node{
         super(left);
         this.columns = columns;
     }
+    public Projection(){}
 
     @Override
     public String toString() {
         StringBuilder bf = new StringBuilder();
-        bf.append("π").append(" ");
-        for (int i = 0; i < columns.size(); i++) {
-            if (i == columns.size()-1){
-                bf.append(columns.get(i));
-                break;
-            }
-            bf.append(columns.get(i)).append(",");
+        bf.append("π").append(" ");    
+        // bricolage until the columns get related to the tables
+        if (columns != null) {
+            
+            for (int i = 0; i < columns.size(); i++) {
+                if (columns.get(i) != null)
+                {
+                    
+                    if (i == columns.size()-1){
+                        bf.append(columns.get(i));
+                        break;
+                    }
+                    bf.append(columns.get(i)).append(",");
+                }
+        }    
+                       
         }
         return bf.toString();
     }

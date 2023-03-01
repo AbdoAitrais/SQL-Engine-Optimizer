@@ -3,6 +3,8 @@ package BusinessObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.CloseAction;
+
 public class Transformer {
     public List<Node> trees;
     public Node mainRoot;
@@ -39,12 +41,43 @@ public class Transformer {
         return nd.toString().charAt(0) == 'σ';
     }
     private boolean isJoin(Node nd){
-        return nd.toString().charAt(0) == '∞';
+        return nd.toString().charAt(0) == '⋈';
+    }
+
+
+    public boolean sameTree(Node t1,Node t2)
+    {
+        if (!t1.equals(t2))      
+            return false;
+        sameTree(t1.left,t2.left);
+        sameTree(t1.right,t2.right);
+        return true;
+    }
+
+    public boolean existInListOfTrees(Node nd)
+    {
+        for (Node node : trees) {
+            if (sameTree(node, nd)) {
+                return true;
+            }   
+        }
+        return false;
     }
     public void createEquivalence(){
-        trees.add(eclatement(JCUse(clone(mainRoot))));
-        trees.add(eclatement(clone(mainRoot)));
+        trees.add(mainRoot);
+        //trees.add(eclatement(SCUse(mainRoot)));
+        trees.add(eclatement(clone(mainRoot)));               
+        trees.add(JCUse(clone(mainRoot)));
+        trees.add(CPJUse(clone(mainRoot)));
+        trees.add(SCUse(clone(mainRoot)));
+        trees.add(CPSUse(clone(mainRoot)));
+        trees.add(CJSUse(clone(mainRoot)));
+        
+
+        System.out.println("the size is " +trees.size());
     }
+
+
     public Node eclatement(Node leaf)
     {
         if (leaf != null){
@@ -76,16 +109,21 @@ public class Transformer {
             if (isJoin(leaf)){
                 leaf = JC(leaf);
             }
-            JCUse(leaf.left);
+            else  JCUse(leaf.left);
         }
         return leaf;
     }
     
 
-    public Node SCUse(Node leaf)
+    public Node SCUse(Node leaf)// does not work very well miss something I don't fucking know
     {
-        if (isSelect(leaf) && isSelect(leaf.left)){
-            leaf = SC(leaf);
+        if (leaf != null && leaf.left != null) {
+            
+            if (isSelect(leaf) && isSelect(leaf.left)){
+                leaf = SC(leaf); 
+                return leaf;           
+            }
+            else SCUse(leaf.left);
         }
         return leaf;
     } 
@@ -110,22 +148,41 @@ public class Transformer {
     }
     public Node JAUse(Node leaf)
     {
-        // if (isJoin(leaf.right)) {
-        //     leaf = JA(leaf);
-        // }
-        // return leaf;
+        if (isJoin(leaf) && isJoin(leaf.right)) {
+            leaf = JA(leaf);
+        }else  
+            return JAUse(leaf.left);
+        return leaf;
 
-        return isJoin(leaf.right) ? JA(leaf) : leaf;
+        // return isJoin(leaf.right) ? JA(leaf) : leaf;
     }
 
 
     public Node CJSUse(Node leaf)
     {
-        return ( isSelect(leaf) && isJoin(leaf.left) ) ? CSJ(leaf) : leaf;
+        // return ( isSelect(leaf) && isJoin(leaf.left) ) ? CSJ(leaf) : leaf;
+        // if (leaf ==null )System.out.println("the node is null");
+        if(leaf != null)
+        {
+            // System.out.println("I am not null");
+            if (isSelect(leaf) && isJoin(leaf.left))
+            {  
+                // System.out.println("make the change");
+                leaf = CSJ(leaf);
+            }
+
+           else {
+            
+            CJSUse(leaf.left);
+        }
+        }
+        
+        return leaf;
     }
     public Node CSJ(Node nd) // e (T1 ⋈ T2) = e (T1) ⋈ T2
     {  
        //NB :  the nd is always a selection 
+        // System.out.println("begin the chinage"); 
         Node join = nd.left;
         nd.left = join.left;
         join.left = nd;
@@ -133,8 +190,68 @@ public class Transformer {
     }
 
 
-    public Node CPS(Node nd)
+
+    public Node CPJUse(Node leaf)
     {
-        return nd;
+        if(leaf != null)
+        {
+            if (isProject(leaf) && isJoin(leaf.left))
+            {
+                // System.out.println("I found the case");
+                Projection pro = (Projection)leaf;                
+                leaf = CPJ(pro);
+            }
+           else  CPJUse(leaf.left);
+        }
+        // System.out.println("that's fucking null");
+        return leaf;
+    }
+    public Node CPJ(Projection nd)
+    {
+        
+        Node  joiNode = nd.left;
+        System.out.println(joiNode.left);
+        System.out.println(joiNode.right);
+        Projection leftProj = new Projection(joiNode.left,null);
+        Projection rightProj  = new Projection(joiNode.right,null);//rightProj.left = joiNode.right;
+        System.out.println("I did the chainage");
+
+        System.out.println(leftProj);
+        System.out.println(rightProj);
+        //filter the columns but the columns is not related to a table in the column class
+        // for ( Column col: nd.columns) {
+        //     Relation rel = (Relation)(joiNode.left);
+        //     if(col.getTable().equals(rel.getTable()))
+        //         leftProj.columns.add(col);
+        //     else 
+        //         rightProj.columns.add(col);
+        // }
+        System.out.println("leftProj = " +leftProj);
+        System.out.println("rightProj = " +rightProj);
+        System.out.println("infos");
+        joiNode.left  =leftProj  ;
+        joiNode.right =rightProj ;
+        return joiNode;
+    }
+
+
+    public Node CPSUse(Node leaf)
+    {
+        if (leaf != null) {
+            if (isProject(leaf) && isSelect(leaf.left)) {
+                leaf = CPS(leaf);
+            }
+            else CPSUse(leaf.left);
+        }
+        return leaf;
+    }
+
+    public Node CPS(Node nd) // we can use the SC function it's the same thing
+    {
+
+        Node temp = nd.left;
+        nd.left = temp.left;
+        temp.left = nd;        
+        return temp;
     }
 }
