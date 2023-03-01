@@ -63,7 +63,13 @@ public class Transformer {
        return temp;
     }
 
-
+    public Node JC(Node nd)
+    {
+        Node temp = nd.left;
+        nd.left = nd.right;
+        nd.right = temp;
+        return nd;
+    }
     public Node JCUse(Node leaf)
     {
         if (leaf != null){
@@ -74,11 +80,61 @@ public class Transformer {
         }
         return leaf;
     }
-    public Node JC(Node nd)
+    
+
+    public Node SCUse(Node leaf)
+    {
+        if (isSelect(leaf) && isSelect(leaf.left)){
+            leaf = SC(leaf);
+        }
+        return leaf;
+    } 
+    public Node SC(Node nd)
     {
         Node temp = nd.left;
-        nd.left = nd.right;
-        nd.right = temp;
+        nd.left = temp.left;
+        temp.left = nd;
+        return temp;
+    }
+
+    public Node JA(Node nd) // T1 join (T2 join T3) ==>  (T1 join T2) join T3
+    {
+        
+        Node rightJoin  = nd.right; // save the right join (T2 join T3)
+        nd.right = rightJoin.right; // mainJoin took the T3 as right child
+        // form the subJoin  now
+        rightJoin.right = rightJoin.left;//subJoin took the T2 as right child 
+        rightJoin.left = nd.left;// //subJoin took the T1 as left child 
+        nd.left = rightJoin;// the mainJoin took the subJoin as left child 
+        return nd;// return the mainJoin
+    }
+    public Node JAUse(Node leaf)
+    {
+        // if (isJoin(leaf.right)) {
+        //     leaf = JA(leaf);
+        // }
+        // return leaf;
+
+        return isJoin(leaf.right) ? JA(leaf) : leaf;
+    }
+
+
+    public Node CJSUse(Node leaf)
+    {
+        return ( isSelect(leaf) && isJoin(leaf.left) ) ? CSJ(leaf) : leaf;
+    }
+    public Node CSJ(Node nd) // e (T1 ⋈ T2) = e (T1) ⋈ T2
+    {  
+       //NB :  the nd is always a selection 
+        Node join = nd.left;
+        nd.left = join.left;
+        join.left = nd;
+        return join;
+    }
+
+
+    public Node CPS(Node nd)
+    {
         return nd;
     }
 }
