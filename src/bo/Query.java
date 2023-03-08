@@ -1,9 +1,12 @@
-package BusinessObject;
+package bo;
 
-import DefinedExceptions.*;
+import controler.Optimizer;
+import exceptions.InvalidSQLException;
+import exceptions.TableNotExistException;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Vector;
 
 public class Query {
     private static final String JOINTURE = "Jointure";

@@ -1,13 +1,20 @@
-package BusinessObject;
+package bo;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.CloseAction;
-
 public class Transformer {
     public List<Node> trees;
     public Node mainRoot;
+    public int nodesProcessed;
+    private boolean reachedEnd;
+    private boolean es;
+    private boolean sc;
+    private boolean jc;
+    private boolean ja;
+    private boolean cpj;
+    private boolean cps;
+    private boolean cjs;
     public Node clone(Node leaf) {
         Node newNode = null;
         if (isJoin(leaf)){
@@ -33,6 +40,7 @@ public class Transformer {
     public Transformer(Node root){
         this.trees = new ArrayList<>();
         this.mainRoot = root;
+        this.nodesProcessed = 0;
     }
     private boolean isProject(Node nd){
         return nd.toString().charAt(0) == 'π';
@@ -43,6 +51,8 @@ public class Transformer {
     private boolean isJoin(Node nd){
         return nd.toString().charAt(0) == '⋈';
     }
+
+
 
 
     public boolean sameTree(Node t1,Node t2)
@@ -63,33 +73,102 @@ public class Transformer {
         }
         return false;
     }
-    public void createEquivalence(){
-        trees.add(mainRoot);
-        //trees.add(eclatement(SCUse(mainRoot)));
-        trees.add(eclatement(clone(mainRoot)));               
-        trees.add(JCUse(clone(mainRoot)));
-        trees.add(CPJUse(clone(mainRoot)));
-        trees.add(SCUse(clone(mainRoot)));
-        trees.add(CPSUse(clone(mainRoot)));
-        trees.add(CJSUse(clone(mainRoot)));
-        
+    /****************------- Generating Variants -------****************/
+    private void addVariantTree(Node tree){
+        if (tree == null)
+            return;
+        trees.add(tree);
+    }
+    public Node createVaraiantTree(Node leaf,int level){
+        if (leaf != null){
+            System.out.println(leaf);
+            if (level == nodesProcessed){
+                if (isSelect(leaf) && isSelect(leaf.left) && !es){
+                    leaf = ES(leaf);
+                    es = true;
+                    return leaf;
+                }
+                if (isSelect(leaf) && isSelect(leaf.left) && !sc){
+                    leaf = SC(leaf);
+                    sc = true;
+                    return leaf;
+                }
+                if (isJoin(leaf) && isJoin(leaf.right) && !ja) {
+                    leaf = JA(leaf);
+                    ja = true;
+                    return leaf;
+                }
+                if (isJoin(leaf) & !jc){
+                    leaf = JC(leaf);
+                    jc = true;
+                    return leaf;
+                }
+                if (isSelect(leaf) && isJoin(leaf.left) && !cjs)
+                {
+                    leaf = CSJ(leaf);
+                    cjs = true;
+                    return leaf;
+                }
+                if (isProject(leaf) && isSelect(leaf.left) && !cps) {
+                    leaf = CPS(leaf);
+                    cps = true;
+                    return leaf;
+                }
+                if (isProject(leaf) && isJoin(leaf.left) && !cpj)
+                {
+                    Projection pro = (Projection)leaf;
+                    leaf = CPJ(pro);
+                    cpj = true;
+                    return leaf;
+                }
+                nodesProcessed++;
+            }
+            createVaraiantTree(leaf.left,level+1);
+        }
+        System.out.println(leaf);
+        reachedEnd = true;
+        return leaf;
+    }
+    public void generateVariantTrees(Node originalTree){
+        createVariantsForTree(originalTree);
 
-        System.out.println("the size is " +trees.size());
+        List<Node> temp = new ArrayList<>(trees);
+        trees.add(originalTree);
+        for (Node node:temp) {
+            createVariantsForTree(node);
+            trees.add(node);
+        }
+    }
+
+    private void createVariantsForTree(Node node) {
+        nodesProcessed = 0;
+        reachedEnd = false;
+        es = false;
+        sc = false;
+        jc = false;
+        ja = false;
+        cpj = false;
+        cps = false;
+        cjs = false;
+        while (!reachedEnd){
+            System.out.println(node);
+            trees.add(createVaraiantTree(clone(node),0));
+        }
     }
 
 
-    public Node eclatement(Node leaf)
+    public Node ESUse(Node leaf)
     {
         if (leaf != null){
             if (isSelect(leaf) && isSelect(leaf.left)){
-                leaf = eclatementSelection(leaf);
-                eclatement(leaf);
+                leaf = ES(leaf);
+                ESUse(leaf);
             }
-            eclatement(leaf.left);
+            ESUse(leaf.left);
         }
         return leaf;
     }
-    public Node eclatementSelection(Node leaf){
+    public Node ES(Node leaf){
        Selection temp = (Selection) leaf;
        temp.condition += " and " + ((Selection) temp.left).condition;
        temp.left = temp.left.left;

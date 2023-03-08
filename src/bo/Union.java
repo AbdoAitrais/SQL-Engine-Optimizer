@@ -1,4 +1,4 @@
-package BusinessObject;
+package bo;
 
 public class Union extends Node{
     public Union(Node left, Node right) {

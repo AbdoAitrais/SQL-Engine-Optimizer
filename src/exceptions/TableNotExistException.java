@@ -1,4 +1,4 @@
-package DefinedExceptions;
+package exceptions;
 
 public class TableNotExistException extends Exception{
     public TableNotExistException() {

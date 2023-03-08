@@ -1,7 +1,10 @@
-package View;
+package view;
 
-import BusinessObject.*;
-import DefinedExceptions.*;
+import bo.Node;
+import bo.Transformer;
+import controler.Optimizer;
+import exceptions.InvalidSQLException;
+import exceptions.TableNotExistException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +17,8 @@ public class AlgebraicTreeViewer {
         Vector<AlgebraicTreePanel> panels = new Vector<AlgebraicTreePanel>();
         Optimizer optimizer = new Optimizer();
         // String query = "SELECT a.column1 as c, * FROM table1 as t1, table2 t2, table3 t3, table4 t4 WHERE t1.column1 = t2.column3 AND t1.column4 = t3.column3 AND t1.column = 55";
-        //String query = "SELECT * FROM Al as  A,Bl as B , Cib C, Derb D where A.id = B.id and B.age = 5 AND B.id = C.id OR C.name > 18 OR A.name = 56";
-        String query =  "SELECT country from employees emp, department dep where emp.department_id = dep.department_id ";
+        String query = "SELECT * FROM Al as  A,Bl as B , Cib C, Derb D where A.id = B.id and B.age = 5 AND B.id = C.id AND C.name > 18";
+        //String query =  "SELECT country from employees emp, department dep where emp.department_id = dep.department_id ";
         // String query =  "SELECT country from employees emp, where  country='631'";
         
 
@@ -26,11 +29,11 @@ public class AlgebraicTreeViewer {
 
         optimizer.getQuery().createTree();
         Transformer transformer = new Transformer(optimizer.getQuery().getRoot());
-        transformer.createEquivalence();        
+        transformer.generateVariantTrees(transformer.mainRoot);
             for (Node node: transformer.trees) {                
                 panels.add(new AlgebraicTreePanel(node));            
         }
-
+        System.out.println(transformer.trees.size());
         // Create the frame to display the panel.
         JFrame frame = new JFrame("Algebraic Tree Viewer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -1,9 +1,9 @@
-package View;
+package view;
 
-import BusinessObject.Node;
+import bo.Node;
 
-import java.awt.Graphics;
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
 
 public class AlgebraicTreePanel extends JPanel {
     private Node root;

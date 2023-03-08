@@ -1,12 +1,11 @@
-package Dictionnary;
-import DefinedExceptions.*;
+package dictionnary;
 
-import java.util.ArrayList;
+import bo.Selection;
+import bo.Table;
+import exceptions.ColumnNotFoundException;
+
 import java.util.List;
 import java.util.Objects;
-
-import BusinessObject.Selection;
-import BusinessObject.Table;
 
 public class Entity {
     Table table;

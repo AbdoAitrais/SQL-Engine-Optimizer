@@ -1,4 +1,4 @@
-package BusinessObject;
+package bo;
 
 public class Catalog {
     public static Table[] tables = {

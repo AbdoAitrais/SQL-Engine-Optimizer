@@ -1,6 +1,6 @@
-package Dictionnary;
+package dictionnary;
 
-import BusinessObject.Table;
+import bo.Table;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

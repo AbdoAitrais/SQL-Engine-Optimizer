@@ -1,4 +1,4 @@
-package Dictionnary;
+package dictionnary;
 
 public class MetaColumn {
 

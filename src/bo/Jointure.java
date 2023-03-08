@@ -1,4 +1,4 @@
-package BusinessObject;
+package bo;
 
 public class Jointure extends Node{
     String condition;

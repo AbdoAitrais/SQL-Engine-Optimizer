@@ -1,4 +1,4 @@
-package BusinessObject;
+package bo;
 
 public abstract class Node {
     Node left;

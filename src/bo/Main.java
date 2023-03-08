@@ -1,4 +1,4 @@
-package BusinessObject;
+package bo;
 
 // import java.util.ArrayList;
 

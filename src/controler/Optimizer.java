@@ -1,6 +1,9 @@
-package BusinessObject;
+package controler;
 
-import DefinedExceptions.*;
+import bo.Column;
+import bo.Query;
+import bo.Table;
+import exceptions.InvalidSQLException;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;

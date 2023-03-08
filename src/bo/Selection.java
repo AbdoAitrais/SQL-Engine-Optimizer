@@ -1,4 +1,4 @@
-package BusinessObject;
+package bo;
 
 public class Selection extends Node{
     String colName;

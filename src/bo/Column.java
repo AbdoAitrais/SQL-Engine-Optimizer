@@ -1,4 +1,4 @@
-package BusinessObject;
+package bo;
 
 public class Column {
     private String name;
