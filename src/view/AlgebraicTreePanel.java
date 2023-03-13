@@ -1,6 +1,6 @@
 package view;
 
-import bo.Node;
+import model.bo.Node;
 
 import javax.swing.*;
 import java.awt.*;

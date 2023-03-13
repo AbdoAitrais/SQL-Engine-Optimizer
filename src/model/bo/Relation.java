@@ -1,4 +1,4 @@
-package bo;
+package model.bo;
 
 public class Relation extends Node {
     Table table;

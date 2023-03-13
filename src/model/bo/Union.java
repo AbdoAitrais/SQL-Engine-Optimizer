@@ -1,4 +1,4 @@
-package bo;
+package model.bo;
 
 public class Union extends Node{
     public Union(Node left, Node right) {

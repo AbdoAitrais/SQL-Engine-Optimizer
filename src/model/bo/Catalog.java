@@ -1,4 +1,4 @@
-package bo;
+package model.bo;
 
 public class Catalog {
     public static Table[] tables = {

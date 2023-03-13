@@ -1,6 +1,6 @@
-package dictionnary;
+package model.dictionnary;
 
-import bo.Table;
+import model.bo.Table;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

@@ -1,8 +1,8 @@
-package dictionnary;
+package model.dictionnary;
 
-import bo.Selection;
-import bo.Table;
-import exceptions.ColumnNotFoundException;
+import model.bo.Selection;
+import model.bo.Table;
+import model.exceptions.ColumnNotFoundException;
 
 import java.util.List;
 import java.util.Objects;

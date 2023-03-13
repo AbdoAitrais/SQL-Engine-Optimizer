@@ -1,8 +1,8 @@
-package bo;
+package model.bo;
 
 import controler.Optimizer;
-import exceptions.InvalidSQLException;
-import exceptions.TableNotExistException;
+import model.exceptions.InvalidSQLException;
+import model.exceptions.TableNotExistException;
 
 import java.util.ArrayList;
 import java.util.Objects;

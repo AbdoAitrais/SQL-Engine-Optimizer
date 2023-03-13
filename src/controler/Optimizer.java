@@ -1,9 +1,9 @@
 package controler;
 
-import bo.Column;
-import bo.Query;
-import bo.Table;
-import exceptions.InvalidSQLException;
+import model.bo.Column;
+import model.bo.Query;
+import model.bo.Table;
+import model.exceptions.InvalidSQLException;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;

@@ -1,4 +1,4 @@
-package exceptions;
+package model.exceptions;
 
 public class TableNotExistException extends Exception{
     public TableNotExistException() {

@@ -1,4 +1,4 @@
-package dictionnary;
+package model.dictionnary;
 
 public class MetaColumn {
 

@@ -1,4 +1,4 @@
-package bo;
+package model.bo;
 
 public abstract class Node {
     Node left;

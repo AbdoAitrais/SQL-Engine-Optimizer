@@ -1,4 +1,4 @@
-package exceptions;
+package model.exceptions;
 
 public class ColumnNotFoundException extends Exception{
     public ColumnNotFoundException() {

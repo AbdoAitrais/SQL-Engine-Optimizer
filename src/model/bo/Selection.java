@@ -1,4 +1,4 @@
-package bo;
+package model.bo;
 
 public class Selection extends Node{
     String colName;
