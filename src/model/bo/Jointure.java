@@ -2,6 +2,7 @@ package model.bo;
 
 public class Jointure extends Node{
     String condition;
+    String algorithm;
     Table table1;
     Table table2;
 
@@ -14,9 +15,27 @@ public class Jointure extends Node{
         this.table2 = table2;
         this.condition = condition;
     }
-    
+
+    public Jointure(Node left, Node right, String condition, String algorithm, Table table1, Table table2) {
+        super(left, right);
+        this.condition = condition;
+        this.algorithm = algorithm;
+        this.table1 = table1;
+        this.table2 = table2;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
+
     @Override
     public String toString() {
+        if (algorithm != null)
+            return "⋈ " + algorithm;
         return "⋈" ;
     }
 

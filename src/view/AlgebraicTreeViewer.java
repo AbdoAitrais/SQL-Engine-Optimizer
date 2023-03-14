@@ -3,10 +3,11 @@ package view;
 import model.bo.*;
 import controler.Optimizer;
 import model.exceptions.*;
+import model.bo.Node;
+import model.bo.Transformer;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class AlgebraicTreeViewer {
 
@@ -27,13 +28,23 @@ public class AlgebraicTreeViewer {
         optimizer.getQuery().createTree();
         Transformer transformer = new Transformer(optimizer.getQuery().getRoot());
         transformer.generateVariantTrees(transformer.mainRoot);
-        System.out.println(transformer.trees.size());
+        transformer.createAllPhysicalTrees();
+
+        System.out.println("Logical Trees : "+transformer.logicalTrees.size());
+        System.out.println("Physical Trees : "+transformer.physicalTrees.size());
         // Create the frame to display the panel.
+
+
         JFrame frame = new JFrame("Algebraic Tree Viewer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        TreeList treeList = new TreeList(transformer);
+        TreeList logicalTrees = new TreeList((ArrayList<Node>) transformer.logicalTrees);
+        TreeList physicalTrees = new TreeList((ArrayList<Node>) transformer.physicalTrees);
         JTabbedPane graphicTrees = new JTabbedPane();
-        graphicTrees.addTab("trees",null,treeList);
+
+
+        graphicTrees.addTab("Logical Trees",null,logicalTrees);
+        graphicTrees.addTab("Physical Trees",null,physicalTrees);
+
         frame.getContentPane().add(graphicTrees);
         frame.pack();
         frame.setSize(700,500);

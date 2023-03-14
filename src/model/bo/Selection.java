@@ -3,6 +3,7 @@ package model.bo;
 public class Selection extends Node{
     String colName;
     String selectionValue;
+    String algorithm;
     String condition;
     Table table;
 
@@ -20,6 +21,23 @@ public class Selection extends Node{
         this.condition = condition;
         this.colName = colName;
         this.selectionValue = selectionValue;
+    }
+
+    public Selection(Node left, Node right, String colName, String selectionValue, String algorithm, String condition, Table table) {
+        super(left, right);
+        this.colName = colName;
+        this.selectionValue = selectionValue;
+        this.algorithm = algorithm;
+        this.condition = condition;
+        this.table = table;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
     }
 
     public String getColName() {
@@ -40,7 +58,9 @@ public class Selection extends Node{
 
     @Override
     public String toString() {
-        return "σ" + " " + condition;
+        if (algorithm != null)
+            return "σ " + algorithm;
+        return "σ " + condition;
     }
 
     @Override

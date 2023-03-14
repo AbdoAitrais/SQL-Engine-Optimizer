@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Transformer {
-    public List<Node> trees;
+    public List<Node> logicalTrees;
+    public List<Node> physicalTrees;
     public Node mainRoot;
     public int nodesProcessed;
+    private String[] joinAlgos = {"BIB","BII","JTF","JH","PJ"};
+    private String[] selectAlgos = {"SB","SE","SNUK"};
     private boolean reachedEnd;
     private boolean es;
     private boolean sc;
@@ -40,7 +43,7 @@ public class Transformer {
         return newNode;
     }
     public Transformer(Node root){
-        this.trees = new ArrayList<>();
+        this.logicalTrees = new ArrayList<>();
         this.mainRoot = root;
         this.nodesProcessed = 0;
     }
@@ -61,19 +64,19 @@ public class Transformer {
 
     public boolean sameTree(Node t1,Node t2)
     {
-        if (!t1.equals(t2))      
+        if (!t1.equals(t2))
             return false;
         sameTree(t1.left,t2.left);
         sameTree(t1.right,t2.right);
         return true;
     }
 
-    public boolean existInListOfTrees(Node nd)
+    public boolean existInListOfTrees(ArrayList<Node> trees,Node nd)
     {
         for (Node node : trees) {
             if (sameTree(node, nd)) {
                 return true;
-            }   
+            }
         }
         return false;
     }
@@ -81,7 +84,7 @@ public class Transformer {
     private void addVariantTree(Node tree){
         if (tree == null)
             return;
-        trees.add(tree);
+        logicalTrees.add(tree);
     }
     public Node createVaraiantTree(Node leaf,int level){
         if (leaf != null){
@@ -130,20 +133,20 @@ public class Transformer {
         return leaf;
     }
     public void createVaraiantsTree(Node leaf){
-        trees.add(ESUse(clone(leaf)));
-        trees.add(SCUse(clone(leaf)));
-        trees.add(JAUse(clone(leaf)));
-        trees.add(JCUse(clone(leaf)));
-        trees.add(CPJUse(clone(leaf)));
+        logicalTrees.add(ESUse(clone(leaf)));
+        logicalTrees.add(SCUse(clone(leaf)));
+        logicalTrees.add(JAUse(clone(leaf)));
+        logicalTrees.add(JCUse(clone(leaf)));
+        logicalTrees.add(CPJUse(clone(leaf)));
     }
     public void generateVariantTrees(Node originalTree){
         createVaraiantsTree(originalTree);
 
-        List<Node> temp = new ArrayList<>(trees);
+        List<Node> temp = new ArrayList<>(logicalTrees);
         for (Node node:temp) {
             createVaraiantsTree(node);
         }
-        trees.add(clone(originalTree));
+        logicalTrees.add(clone(originalTree));
     }
 
     private void createVariantsForTree(Node node) {
@@ -157,7 +160,7 @@ public class Transformer {
         cps = false;
         cjs = false;
         while (!reachedEnd){
-            trees.add(createVaraiantTree(clone(node),0));
+            logicalTrees.add(createVaraiantTree(clone(node),0));
         }
     }
 
@@ -207,7 +210,7 @@ public class Transformer {
         }
         return leaf;
     }
-    
+
 
     public Node SCUse(Node leaf)// does not work very well miss something I don't fucking know
     {
@@ -266,22 +269,22 @@ public class Transformer {
         {
             // System.out.println("I am not null");
             if (isSelect(leaf) && isJoin(leaf.left))
-            {  
+            {
                 // System.out.println("make the change");
                 leaf = CSJ(leaf);
             }
 
-           else {
-            CJSUse(leaf.left);
-            CJSUse(leaf.right);
+            else {
+                CJSUse(leaf.left);
+                CJSUse(leaf.right);
+            }
         }
-        }
-        
+
         return leaf;
     }
     public Node CSJ(Node nd) // e (T1 ⋈ T2) = e (T1) ⋈ T2
     {
-       //NB :  the nd is always a selection 
+        //NB :  the nd is always a selection
         // System.out.println("begin the chinage");
         if (isSelect(nd) && isJoin(nd.left)){
             Node join = nd.left;
@@ -301,10 +304,10 @@ public class Transformer {
             if (isProject(leaf) && isJoin(leaf.left))
             {
                 // System.out.println("I found the case");
-                Projection pro = (Projection)leaf;                
+                Projection pro = (Projection)leaf;
                 leaf = CPJ(pro);
             }
-           else  {
+            else  {
                 CPJUse(leaf.left);
                 CPJUse(leaf.right);
             }
@@ -362,4 +365,31 @@ public class Transformer {
 //        temp.left = nd;
 //        return temp;
 //    }
+    /******************** Physical Trees ********************/
+    public void createAllPhysicalTrees(){
+        physicalTrees = new ArrayList<>();
+        for (Node node:logicalTrees) {
+            createPhysicalTreesForOneTree(node);
+        }
+    }
+    public void createPhysicalTreesForOneTree(Node node){
+        for (String joinAlgo:joinAlgos) {
+            for (String selectAlgo:selectAlgos) {
+                physicalTrees.add(createPhysicalTree(clone(node),joinAlgo,selectAlgo));
+            }
+        }
+    }
+
+    private Node createPhysicalTree(Node leaf, String joinAlgo, String selectAlgo) {
+        if (leaf != null){
+            if (isSelect(leaf))
+                ((Selection) leaf).setAlgorithm(selectAlgo);
+            else if (isJoin(leaf)) {
+                ((Jointure) leaf).setAlgorithm(joinAlgo);
+            }
+            createPhysicalTree(leaf.left,joinAlgo,selectAlgo);
+            createPhysicalTree(leaf.right,joinAlgo,selectAlgo);
+        }
+        return leaf;
+    }
 }

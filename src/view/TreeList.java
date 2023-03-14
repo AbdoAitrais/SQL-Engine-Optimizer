@@ -1,13 +1,14 @@
 package view;
 
-import model.bo.Transformer;
+import model.bo.Node;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class TreeList extends JPanel {
-    public TreeList(Transformer transformer) {
+    public TreeList(ArrayList<Node> trees) {
         setLayout(new BorderLayout());
-        add(new JScrollPane(new TreeListPane(transformer)));
+        add(new JScrollPane(new TreeListPane(trees)));
     }
 }
