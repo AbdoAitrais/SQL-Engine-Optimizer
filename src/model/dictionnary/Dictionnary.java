@@ -9,12 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Dictionnary {
-    ArrayList<Entity> entities;
-    static int TailleBloc = 2;
-    final static int TailleDescripteurBloc = 3;
-    final static int tailleCleIndex = 1;
-    final static int taillePointeurBloc = 2;
-    final double TempsTrans = 0.1;
+    public ArrayList<Entity> entities;
+    public static int TailleBloc = 2;
+
+    public final static int TailleDescripteurBloc = 3;
+    public final static int tailleCleIndex = 1;
+    public final static int taillePointeurBloc = 2;
+    public final static double TempsTrans = 0.1;
+    public final static double TempsPasDebut = 1;
 
     public  void ReadDataFromFileDictionary() {
 
@@ -49,5 +51,8 @@ public class Dictionnary {
     }
     public double calculateOrder(){
         return (double) (Dictionnary.TailleBloc - Dictionnary.TailleDescripteurBloc/calculateTailleEntree());
+    }
+    public static double tempsESBloc(){
+        return TempsTrans+TempsPasDebut;
     }
 }
