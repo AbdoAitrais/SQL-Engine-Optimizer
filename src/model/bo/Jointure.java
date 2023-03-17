@@ -16,6 +16,14 @@ public class Jointure extends Node{
         this.condition = condition;
     }
 
+    public Table getTable1() {
+        return table1;
+    }
+
+    public Table getTable2() {
+        return table2;
+    }
+
     public Jointure(Node left, Node right, String condition, String algorithm, Table table1, Table table2) {
         super(left, right);
         this.condition = condition;

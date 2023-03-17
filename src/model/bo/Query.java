@@ -96,17 +96,17 @@ public class Query {
 
     public Node createTreeSelection(int index) {
         if (index >= selections.size()) {
-            return selections.get(index-1).left;
+            return selections.get(index-1).getLeft();
         }
 
-        Node root = new Selection(selections.get(index).condition);
+        Node root = new Selection(selections.get(index).condition,selections.get(index).getTable());
         root.left = createTreeSelection(index + 1);
         return root;
     }
     public Node createTreeJoin(Node leaf) throws TableNotExistException {
         if (jointures.size() > 1){
-            Jointure nd1 = findJointureByTable(((Jointure) leaf).table1);
-            Jointure nd2 = findJointureByTable(((Jointure) leaf).table2);
+            Jointure nd1 = findJointureByTable(((Jointure) leaf).getTable1());
+            Jointure nd2 = findJointureByTable(((Jointure) leaf).getTable2());
             if (nd1 == null && nd2 == null){
                 Node temp = jointures.get(1);
                 jointures.remove(temp);

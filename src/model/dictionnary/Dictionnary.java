@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Dictionnary {
-    public ArrayList<Entity> entities;
+    public static ArrayList<Entity> entities;
     public static double TR = 0.8;
     public static int M = 50;
     public static int TailleBloc = 2;
@@ -21,6 +21,7 @@ public class Dictionnary {
     public final static double TempsPasDebut = 1;
 
     public Dictionnary(){
+        entities = new ArrayList<>();
         ReadDataFromFileDictionary();
     }
     public  void ReadDataFromFileDictionary() {
@@ -28,7 +29,7 @@ public class Dictionnary {
         try {
             String ligne;
             // Création du flux de lecture
-            BufferedReader br = new BufferedReader(new FileReader("meta.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/model/dictionnary/statistics.txt"));
 
 
             while((ligne = br.readLine()) != null){
@@ -49,7 +50,9 @@ public class Dictionnary {
 
                 entities.add(new Entity(table,Nt,tailleLigneT,FBT,metaColumn));
             }
-        } catch(IOException e) {}
+        } catch(IOException e) {
+            System.err.println(e.getClass() + " : " + e.getMessage());
+        }
     }
     public static double calculateTailleEntree(){
         return (double) (Dictionnary.tailleCleIndex + Dictionnary.TailleDescripteurBloc);
@@ -60,8 +63,9 @@ public class Dictionnary {
     public static double tempsESBloc(){
         return TempsTrans+TempsPasDebut;
     }
-    public Entity findEntityByTableName(String tableName){
+    public static Entity findEntityByTableName(String tableName){
         for (Entity entity:entities) {
+            System.out.println(entity.table.getName());
             if (entity.table.getName().equals(tableName))
                 return entity;
         }
