@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Dictionnary {
     public ArrayList<Entity> entities;
+    public static double TR = 0.8;
     public static int TailleBloc = 2;
 
     public final static int TailleDescripteurBloc = 3;
@@ -18,6 +19,9 @@ public class Dictionnary {
     public final static double TempsTrans = 0.1;
     public final static double TempsPasDebut = 1;
 
+    public Dictionnary(){
+        ReadDataFromFileDictionary();
+    }
     public  void ReadDataFromFileDictionary() {
 
         try {
@@ -54,5 +58,12 @@ public class Dictionnary {
     }
     public static double tempsESBloc(){
         return TempsTrans+TempsPasDebut;
+    }
+    public Entity findEntityByTableName(String tableName){
+        for (Entity entity:entities) {
+            if (entity.table.getName().equals(tableName))
+                return entity;
+        }
+        return null;
     }
 }

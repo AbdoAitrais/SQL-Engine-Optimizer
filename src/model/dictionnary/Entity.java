@@ -13,7 +13,36 @@ public class Entity {
     int tailleLigneT;
     int FBT;
     double AvgOrder = 5;
+    boolean indexSecondaire;
     List<MetaColumn> metaColumns;
+
+    public Table getTable() {
+        return table;
+    }
+
+    public int getNt() {
+        return Nt;
+    }
+
+    public int getTailleLigneT() {
+        return tailleLigneT;
+    }
+
+    public int getFBT() {
+        return FBT;
+    }
+
+    public double getAvgOrder() {
+        return AvgOrder;
+    }
+
+    public boolean isIndexSecondaire() {
+        return indexSecondaire;
+    }
+
+    public List<MetaColumn> getMetaColumns() {
+        return metaColumns;
+    }
 
     public Entity(Table table, int nt, int tailleLigneT, int FBT, List<MetaColumn> metaColumns) {
         this.table = table;
@@ -50,5 +79,13 @@ public class Entity {
     public double calculateHauteur(){
         return Math.log(Nt) / Math.log(AvgOrder);
     }
-
+    public double calculateFBMt(){
+        return (Dictionnary.TailleBloc-Dictionnary.TailleDescripteurBloc)/tailleLigneT;
+    }
+    public double calculateFBt(){
+        return Dictionnary.TR*calculateFBMt();
+    }
+    public double calculateTHt(){
+        return Nt/calculateFBt();
+    }
 }
