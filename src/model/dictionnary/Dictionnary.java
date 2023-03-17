@@ -11,6 +11,7 @@ import java.util.List;
 public class Dictionnary {
     public ArrayList<Entity> entities;
     public static double TR = 0.8;
+    public static int M = 50;
     public static int TailleBloc = 2;
 
     public final static int TailleDescripteurBloc = 3;
