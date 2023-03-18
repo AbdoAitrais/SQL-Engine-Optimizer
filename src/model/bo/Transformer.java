@@ -138,6 +138,7 @@ public class Transformer {
         logicalTrees.add(JAUse(clone(leaf)));
         logicalTrees.add(JCUse(clone(leaf)));
         logicalTrees.add(CPJUse(clone(leaf)));
+        logicalTrees.add(CJSUse(clone(leaf)));
     }
     public void generateVariantTrees(Node originalTree){
         createVaraiantsTree(originalTree);
@@ -263,39 +264,39 @@ public class Transformer {
 
     public Node CJSUse(Node leaf)
     {
-        // return ( isSelect(leaf) && isJoin(leaf.left) ) ? CSJ(leaf) : leaf;
-        // if (leaf ==null )System.out.println("the node is null");
-        if(leaf != null)
-        {
-            // System.out.println("I am not null");
-            if (isSelect(leaf) && isJoin(leaf.left))
-            {
-                // System.out.println("make the change");
-                leaf = CSJ(leaf);
-            }
-
-            else {
-                CJSUse(leaf.left);
-                CJSUse(leaf.right);
-            }
+        if (leaf != null && leaf.left != null) {
+            leaf = CSJ(leaf);
+            CJSUse(leaf.left);
+            CJSUse(leaf.right);
         }
 
         return leaf;
     }
-    public Node CSJ(Node nd) // e (T1 ⋈ T2) = e (T1) ⋈ T2
+    public Node CSJ(Node leaf) // e (T1 ⋈ T2) = e (T1) ⋈ T2
     {
-        //NB :  the nd is always a selection
-        // System.out.println("begin the chinage");
-        if (isSelect(nd) && isJoin(nd.left)){
-            Node join = nd.left;
-            nd.left = join.left;
-            join.left = nd;
-            return join;
+        Node select = leaf.left;
+        if (isSelect(leaf.left) && isJoin(leaf.left.left)){
+            Node join = select.left;
+            if (containsTable(join.right,((Selection) select).getTable())) {
+                select.left = join.right;
+                join.right = select;
+            }else {
+                select.left = join.left;
+                join.left = select;
+            }
+
+            leaf.left= join;
         }
-        return nd;
+        return leaf;
     }
 
-
+    private boolean containsTable(Node node,Table table){
+        if (isJoin(node))
+            return ((Jointure) node).getTable1().getName().equals(table.getName()) || ((Jointure) node).getTable2().getName().equals(table.getName());
+        if (isSelect(node))
+            return ((Selection) node).getTable().getName().equals(table.getName());
+        return node.toString().equals(table.getName());
+    }
 
     public Node CPJUse(Node leaf)
     {

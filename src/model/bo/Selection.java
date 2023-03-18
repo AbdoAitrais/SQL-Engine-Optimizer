@@ -1,5 +1,10 @@
 package model.bo;
 
+import controler.Estimator;
+import model.dictionnary.Dictionnary;
+import model.dictionnary.Entity;
+import model.utilities.Algorithms;
+
 public class Selection extends Node{
     String colName;
     String selectionValue;
@@ -64,7 +69,24 @@ public class Selection extends Node{
     }
 
     @Override
-    public double estimate() {
-        return 0;
+    public double NbrLignes() {
+        return left.NbrLignes()*0.6;
+    }
+
+    @Override
+    public double cost() {
+        switch (algorithm){
+            case Algorithms.SE -> {
+                return Estimator.selectionEgaliteHashage(this);
+            }
+            case Algorithms.SB -> {
+                Entity entity = Dictionnary.findEntityByTableName(table.getName());
+                return Estimator.selectionBalayage(left.NbrLignes(),entity);
+            }
+            case Algorithms.SNUK -> {
+                return Estimator.selectionCleUnique(this);
+            }
+        }
+        return 0.0;
     }
 }

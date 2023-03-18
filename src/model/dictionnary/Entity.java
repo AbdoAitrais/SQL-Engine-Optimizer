@@ -77,7 +77,7 @@ public class Entity {
         return calucalteSelectivityFactor(selection)*Nt;
     }
     public double calculateHauteur(){
-        return Math.log(Nt) / Math.log(AvgOrder);
+        return Math.log(Nt) / Math.log(AvgOrder);///TODO::estimate Nt
     }
     public double calculateFBMt(){
         return (Dictionnary.TailleBloc-Dictionnary.TailleDescripteurBloc)/tailleLigneT;

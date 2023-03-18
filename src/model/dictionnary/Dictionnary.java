@@ -65,9 +65,15 @@ public class Dictionnary {
     }
     public static Entity findEntityByTableName(String tableName){
         for (Entity entity:entities) {
-            System.out.println(entity.table.getName());
             if (entity.table.getName().equals(tableName))
                 return entity;
+        }
+        return null;
+    }
+    public static Table getTableByColumnName(String colName){
+        for (Entity entity:entities) {
+            if (entity.table.findColumn(colName))
+                return entity.table;
         }
         return null;
     }

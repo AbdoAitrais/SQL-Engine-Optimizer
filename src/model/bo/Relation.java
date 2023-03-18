@@ -1,5 +1,9 @@
 package model.bo;
 
+import model.dictionnary.Dictionnary;
+
+import java.util.Objects;
+
 public class Relation extends Node {
     Table table;
 
@@ -17,7 +21,12 @@ public class Relation extends Node {
     }
 
     @Override
-    public double estimate() {
-        return 0;
+    public double NbrLignes() {
+        return Objects.requireNonNull(Dictionnary.findEntityByTableName(table.getName())).getNt();
+    }
+
+    @Override
+    public double cost() {
+        return 0.0;
     }
 }

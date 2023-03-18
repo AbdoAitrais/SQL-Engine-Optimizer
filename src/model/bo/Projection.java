@@ -35,7 +35,12 @@ public class Projection extends Node{
     }
 
     @Override
-    public double estimate() {
+    public double NbrLignes() {
         return 0;
+    }
+
+    @Override
+    public double cost() {
+        return 0.0;
     }
 }

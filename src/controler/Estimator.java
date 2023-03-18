@@ -7,9 +7,6 @@ import model.dictionnary.Dictionnary;
 import model.dictionnary.Entity;
 import model.utilities.Algorithms;
 
-import java.math.BigDecimal;
-import java.util.Hashtable;
-
 public class Estimator {
 //    Hashtable<Node, Double> coutsPipelinage;
 //    Hashtable<Node, Double> coutsMaterialisation;
@@ -19,25 +16,21 @@ public class Estimator {
             return 0.0;
         if (isJoin(leaf)){
             Jointure join = (Jointure) leaf;
-            Entity entity1 = Dictionnary.findEntityByTableName(join.getTable1().getName());
-            Entity entity2 = Dictionnary.findEntityByTableName(join.getTable2().getName());
-            assert entity1 != null;
-            assert entity2 != null;
             switch (join.getAlgorithm()){
                 case Algorithms.BIB -> {
-                    return boucleImbriqueBlocs(entity1,entity2) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
+                    return boucleImbriqueBlocs(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
                 case Algorithms.BII -> {
-                    return boucleImbriqueIndex(entity1) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
+                    return boucleImbriqueIndex(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
                 case Algorithms.JH -> {
-                    return jointureHashage(entity1,entity2) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
+                    return jointureHashage(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
                 case Algorithms.JTF -> {
-                    return jointureTriFusion(entity1,entity2) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
+                    return jointureTriFusion(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
                 case Algorithms.PJ -> {
-                    return preJointure(entity1,entity2) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
+                    return preJointure(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
             }
         }else if (isSelect(leaf)){
@@ -46,23 +39,25 @@ public class Estimator {
             assert entity != null;
             switch (selection.getAlgorithm()){
                 case Algorithms.SE -> {
-                    return selectionEgaliteHashage(entity) + coutAvecMaterialisation(leaf.getLeft());
+                    return selectionEgaliteHashage(selection) + coutAvecMaterialisation(leaf.getLeft());
                 }
                 case Algorithms.SB -> {
-                    return selectionBalayage(entity) + coutAvecMaterialisation(leaf.getLeft());
+                    return selectionBalayage(selection.getLeft().NbrLignes(),entity) + coutAvecMaterialisation(leaf.getLeft());
                 }
                 case Algorithms.SNUK -> {
-                    return selectionCleUnique(entity) + coutAvecMaterialisation(leaf.getLeft());
+                    return selectionCleUnique(selection) + coutAvecMaterialisation(leaf.getLeft());
                 }
             }
         }
         return coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
     }
-    public double coutAvecPipelinage(Node leaf){
-        //TODO::ecrice la fonction
-        return 0.0;
+    public double coutAvecPipelinage(Node node) {
+        if (node == null)
+            return 0.0;
+        double leftMax = coutAvecPipelinage(node.getLeft());
+        double rightMax = coutAvecPipelinage(node.getRight());
+        return Math.max(node.cost(), Math.max(leftMax, rightMax));
     }
-
     /******************************** Fonction d'utilite ********************************/
 
     boolean isJH(String algo){
@@ -121,36 +116,72 @@ public class Estimator {
     }
 
     /******************************** Fonction de calculs ********************************/
-    public double selectionBalayage(Entity entity){
-        return entity.calculateBT()* Dictionnary.TempsTrans;
+    static public double selectionBalayage(double nbrLignes, Entity entity){
+        return ((calculateBT(nbrLignes,entity))* Dictionnary.TempsTrans);
     }
-    public double selectionCleUnique(Entity entity){
+    static public double selectionCleUnique(Selection selection){
+        Entity entity = Dictionnary.findEntityByTableName(selection.getTable().getName());
+        assert entity != null;
         if (entity.isIndexSecondaire())
-            return (entity.calculateHauteur()+1)*Dictionnary.tempsESBloc();
-        return entity.calculateHauteur()*Dictionnary.tempsESBloc();
+            return (calculateHauteur(selection.getLeft().NbrLignes(),entity)+1)*Dictionnary.tempsESBloc();
+        return calculateHauteur(selection.getLeft().NbrLignes(),entity)*Dictionnary.tempsESBloc();
     }
-    public double selectionEgaliteHashage(Entity entity){
-        return (entity.getNt()/entity.calculateTHt() * entity.getFBT())*Dictionnary.tempsESBloc();
+    static public double selectionEgaliteHashage(Selection selection){
+        Entity entity = Dictionnary.findEntityByTableName(selection.getTable().getName());
+        assert entity != null;
+        return (selection.getLeft().NbrLignes()/calculateTHt(selection.getLeft().NbrLignes(),entity) * entity.getFBT())*Dictionnary.tempsESBloc();
     }
-    public double triFusion(Entity entity){
-        return 2*((entity.calculateBT() / Dictionnary.M)*Dictionnary.TempsPasDebut + entity.calculateBT()*Dictionnary.TempsTrans )
-                + entity.calculateBT()*(2*(Math.log10(entity.calculateBT() / Dictionnary.M) / (Dictionnary.M - 1)) - 1) * Dictionnary.tempsESBloc();
+    static public double triFusion(double nbrLignes, Entity entity){
+        return 2*((calculateBT(nbrLignes,entity) / Dictionnary.M)*Dictionnary.TempsPasDebut + calculateBT(nbrLignes,entity)*Dictionnary.TempsTrans )
+                + calculateBT(nbrLignes,entity)*(2*(Math.log10(calculateBT(nbrLignes,entity) / Dictionnary.M) / (Dictionnary.M - 1)) - 1) * Dictionnary.tempsESBloc();
     }
-    public double boucleImbriqueBlocs(Entity entity1, Entity entity2){
-        return entity1.calculateBT()*(Dictionnary.tempsESBloc() + (entity2.calculateBT()*Dictionnary.TempsTrans) + Dictionnary.TempsPasDebut );
+    static public double boucleImbriqueBlocs(Jointure jointure){
+        Entity entity1 = Dictionnary.findEntityByTableName(jointure.getTable1().getName());
+        Entity entity2 = Dictionnary.findEntityByTableName(jointure.getTable2().getName());
+        assert entity1 != null;
+        assert entity2 != null;
+        return calculateBT(jointure.getLeft().NbrLignes(),entity1)*(Dictionnary.tempsESBloc() + (calculateBT(jointure.getRight().NbrLignes(),entity2)*Dictionnary.TempsTrans) + Dictionnary.TempsPasDebut );
     }
-    public double boucleImbriqueIndex(Entity entity){
-        return (entity.calculateBT() * Dictionnary.tempsESBloc());
+    static public double boucleImbriqueIndex(Jointure jointure){
+        Entity entity = Dictionnary.findEntityByTableName(jointure.getTable1().getName());
+        assert entity != null;
+        return (calculateBT(jointure.getLeft().NbrLignes(),entity) * Dictionnary.tempsESBloc());
     }
-    public double jointureTriFusion(Entity entity1, Entity entity2){
-        return (triFusion(entity1) + triFusion(entity2) + 2*(entity1.calculateBT()+entity2.calculateBT())*Dictionnary.tempsESBloc());
+    static public double jointureTriFusion(Jointure jointure){
+        Entity entity1 = Dictionnary.findEntityByTableName(jointure.getTable1().getName());
+        Entity entity2 = Dictionnary.findEntityByTableName(jointure.getTable2().getName());
+        assert entity1 != null;
+        assert entity2 != null;
+        return (triFusion(jointure.getLeft().NbrLignes(),entity1) + triFusion(jointure.getRight().NbrLignes(),entity2)
+                + 2*(calculateBT(jointure.getLeft().NbrLignes(),entity1)
+                        + calculateBT(jointure.getRight().NbrLignes(), entity2))*Dictionnary.tempsESBloc());
     }
-    public double jointureHashage(Entity entity1, Entity entity2){
-        return (selectionBalayage(entity1) + selectionBalayage(entity2) + 2*(entity1.calculateBT()+entity2.calculateBT())*Dictionnary.tempsESBloc());
+    static public double jointureHashage(Jointure jointure){
+        Entity entity1 = Dictionnary.findEntityByTableName(jointure.getTable1().getName());
+        Entity entity2 = Dictionnary.findEntityByTableName(jointure.getTable2().getName());
+        assert entity1 != null;
+        assert entity2 != null;
+        return (selectionBalayage(jointure.getLeft().NbrLignes(),entity1) +
+                selectionBalayage(jointure.getRight().NbrLignes(), entity2) +
+                2*((calculateBT(jointure.getLeft().NbrLignes(),entity1)+
+                        calculateBT(jointure.getRight().NbrLignes(), entity2))*Dictionnary.tempsESBloc()));
     }
-    public double preJointure(Entity entity1, Entity entity2){
-        return selectionBalayage(entity1) + selectionBalayage(entity2);
+    static public double preJointure(Jointure jointure){
+        Entity entity1 = Dictionnary.findEntityByTableName(jointure.getTable1().getName());
+        Entity entity2 = Dictionnary.findEntityByTableName(jointure.getTable2().getName());
+        assert entity1 != null;
+        assert entity2 != null;
+        return selectionBalayage(jointure.getLeft().NbrLignes(),entity1) +
+                selectionBalayage(jointure.getRight().NbrLignes(), entity2);
     }
-
-
+    /******************* Fonction de clalcule ********************/
+    static double calculateHauteur(double nbrLignes,Entity entity){
+        return Math.log(nbrLignes)/Math.log(entity.getAvgOrder());
+    }
+    static double calculateBT(double nbrLignes,Entity entity){
+        return nbrLignes/entity.getFBT();
+    }
+    static public double calculateTHt(double nbrLignes,Entity entity){
+        return nbrLignes/entity.calculateFBt();
+    }
 }

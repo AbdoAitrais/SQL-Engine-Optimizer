@@ -1,5 +1,8 @@
 package model.bo;
 
+import controler.Estimator;
+import model.utilities.Algorithms;
+
 public class Jointure extends Node{
     String condition;
     String algorithm;
@@ -48,7 +51,29 @@ public class Jointure extends Node{
     }
 
     @Override
-    public double estimate() {
-        return 0;
+    public double NbrLignes() {
+        return ((left.NbrLignes()* right.NbrLignes())*0.6);
+    }
+
+    @Override
+    public double cost() {
+        switch (algorithm){
+            case Algorithms.BIB -> {
+                return Estimator.boucleImbriqueBlocs(this);
+            }
+            case Algorithms.BII -> {
+                return Estimator.boucleImbriqueIndex(this);
+            }
+            case Algorithms.JH -> {
+                return Estimator.jointureHashage(this);
+            }
+            case Algorithms.JTF -> {
+                return Estimator.jointureTriFusion(this);
+            }
+            case Algorithms.PJ -> {
+                return Estimator.preJointure(this);
+            }
+        }
+        return 0.0;
     }
 }

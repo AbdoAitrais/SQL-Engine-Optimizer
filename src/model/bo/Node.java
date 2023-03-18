@@ -21,6 +21,6 @@ public abstract class Node {
         this.right = right;
     }
 
-    public abstract double estimate();
-
+    public abstract double NbrLignes();
+    public abstract double cost();
 }
