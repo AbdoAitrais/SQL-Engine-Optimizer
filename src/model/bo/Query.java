@@ -1,5 +1,6 @@
 package model.bo;
 
+import model.dictionnary.Dictionnary;
 import model.exceptions.InvalidSQLException;
 import model.exceptions.TableNotExistException;
 
@@ -159,23 +160,6 @@ public class Query {
         jointures.clear();
         return origin;
      }
-//     private Node noWhereClause(){
-//
-//     }
-
-//    public Node createTreeWithoutWhere(Node leaf){
-//        if (tables.size() > 1){
-//            Relation nd1 = new Relation(((Relation) leaf).table);
-//            Relation nd2 = new Relation(tables.get(1));
-//            leaf.left = nd1;
-//            jointures.remove(nd1);
-//            createTreeWithoutWhere(leaf.left);
-//            leaf.right = nd2;
-//            jointures.remove(nd2);
-//            createTreeWithoutWhere(leaf.right);
-//        }
-//        return leaf;
-//    }
     public void createTree() throws TableNotExistException, InvalidSQLException {
         if (whereClause == null)
             throw new InvalidSQLException();
@@ -215,18 +199,6 @@ public class Query {
             for (ind = 0; ind < niveau_courant; ind++)
                 System.out.print("      ");
             System.out.println("~");
-        }
-    }
-
-    public void showGraphic()
-    {
-        if(root != null)
-        {
-            System.out.print("\nL'AFFICHAGE DE L'arbre\n");
-            //appel de la fonction afficher_noeud avec un niveau
-            //courant=0
-            showNode(root,0);
-            System.out.print("\n\n");
         }
     }
 

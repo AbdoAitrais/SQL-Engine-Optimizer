@@ -1,11 +1,16 @@
 package view;
 import javax.swing.*;
 
+import model.bo.LogicalTree;
+import model.bo.Node;
 import model.exceptions.InvalidSQLException;
 import model.exceptions.TableNotExistException;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class SQLQueryOptimizer extends JFrame {
 
@@ -14,8 +19,8 @@ public class SQLQueryOptimizer extends JFrame {
     private JLabel titleLabel;
     private JTextArea queryTextArea;
     private JButton submitButton;
-
-    public SQLQueryOptimizer() 
+    AlgebraicTreeViewer algebraicTreeViewer = null;
+    public SQLQueryOptimizer()
     {
         setTitle("SQL Query Optimizer");
         setSize(600, 500);
@@ -57,12 +62,18 @@ public class SQLQueryOptimizer extends JFrame {
         submitButton.setBackground(new Color(0x3F51B5));
         submitButton.setForeground(new Color(0xFFFFFF));
         submitButton.setFont(new Font("Open Sans", Font.PLAIN, 14));
+
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String query = queryTextArea.getText();
                 query.replace("\n","\t");
                 try {
-                    new AlgebraicTreeViewer(query);
+                    algebraicTreeViewer = new AlgebraicTreeViewer(query);
+                    JPanel additionalPanel = new OptimalTreePanel(algebraicTreeViewer.minPhysical,algebraicTreeViewer.minLogical,algebraicTreeViewer.minValue,algebraicTreeViewer.minValue);
+                    additionalPanel.setOpaque(false);
+                    additionalPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                    overlayPanel.add(additionalPanel, BorderLayout.SOUTH);
+
                 } catch (InvalidSQLException | TableNotExistException e1) {
                     
                     e1.printStackTrace();
@@ -74,22 +85,17 @@ public class SQLQueryOptimizer extends JFrame {
 
         overlayPanel.add(inputPanel, BorderLayout.CENTER);
 
-        // create a new panel and add it below the input panel
-        JPanel additionalPanel = new JPanel();
-        additionalPanel.setOpaque(false);
-        additionalPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        // add any additional components you want here
-        // JLabel additionalLabel = new JLabel("Additional Component:");
-        // additionalPanel.add(additionalLabel);
 
-        overlayPanel.add(additionalPanel, BorderLayout.SOUTH);
+        // create a new panel and add it below the input panel
+
+
+
 
         add(panel);
         setLocationRelativeTo(null);
         setVisible(true);
 
         
-}
-
+    }
    
 }

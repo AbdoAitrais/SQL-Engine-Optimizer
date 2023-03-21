@@ -1,5 +1,6 @@
 package model.dictionnary;
 
+import model.bo.Column;
 import model.bo.Table;
 
 import java.io.BufferedReader;
@@ -47,7 +48,6 @@ public class Dictionnary {
                         Integer.parseInt(colonne[2]),
                         Integer.parseInt(colonne[3])
                 ));
-
                 entities.add(new Entity(table,Nt,tailleLigneT,FBT,metaColumn));
             }
         } catch(IOException e) {

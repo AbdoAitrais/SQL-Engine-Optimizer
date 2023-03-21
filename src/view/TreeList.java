@@ -1,5 +1,6 @@
 package view;
 
+import model.bo.LogicalTree;
 import model.bo.Node;
 
 import javax.swing.*;

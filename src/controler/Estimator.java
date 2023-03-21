@@ -1,16 +1,18 @@
 package controler;
 
 import model.bo.Jointure;
+import model.bo.LogicalTree;
 import model.bo.Node;
 import model.bo.Selection;
 import model.dictionnary.Dictionnary;
 import model.dictionnary.Entity;
 import model.utilities.Algorithms;
 
-public class Estimator {
-//    Hashtable<Node, Double> coutsPipelinage;
-//    Hashtable<Node, Double> coutsMaterialisation;
+import java.util.Hashtable;
 
+public class Estimator {
+
+    /******************************** Fonctions de couts ********************************/
     public double coutAvecMaterialisation(Node leaf){
         if (leaf == null)
             return 0.0;
@@ -58,51 +60,22 @@ public class Estimator {
         double rightMax = coutAvecPipelinage(node.getRight());
         return Math.max(node.cost(), Math.max(leftMax, rightMax));
     }
+    public Hashtable<Node,Double> calculateCostMaterialization(LogicalTree logicalTree){
+        Hashtable<Node,Double> treesCosts = new Hashtable<>();
+        for (Node node:logicalTree.getPhysicalTrees()){
+            treesCosts.put(node,coutAvecMaterialisation(node));
+        }
+        return treesCosts;
+    }
+    public Hashtable<Node,Double> calculateCostPipelinage(LogicalTree logicalTree){
+        Hashtable<Node,Double> treesCosts = new Hashtable<>();
+        for (Node node:logicalTree.getPhysicalTrees()){
+            treesCosts.put(node,coutAvecPipelinage(node));
+        }
+        return treesCosts;
+    }
     /******************************** Fonction d'utilite ********************************/
 
-    boolean isJH(String algo){
-        if (algo == null)
-            return false;
-        return algo.equals(Algorithms.JH);
-    }
-    boolean isPJ(String algo){
-        if (algo == null)
-            return false;
-        return algo.equals(Algorithms.PJ);
-    }
-    boolean isJTF(String algo){
-        if (algo == null)
-            return false;
-        return algo.equals(Algorithms.JTF);
-    }
-    boolean isBIB(String algo){
-        if (algo == null)
-            return false;
-        return algo.equals(Algorithms.BIB);
-    }
-    boolean isBII(String algo){
-        if (algo == null)
-            return false;
-        return algo.equals(Algorithms.BII);
-    }
-    boolean isSE(String algo){
-        if (algo == null)
-            return false;
-        return algo.equals(Algorithms.SE);
-    }
-    boolean isSB(String algo){
-        if (algo == null)
-            return false;
-        return algo.equals(Algorithms.SB);
-    }
-    boolean isSNUK(String algo){
-        if (algo == null)
-            return false;
-        return algo.equals(Algorithms.SNUK);
-    }
-    private boolean isProject(Node nd){
-        return nd.toString().charAt(0) == 'π';
-    }
     private boolean isSelect(Node nd){
         return nd.toString().charAt(0) == 'σ';
     }
