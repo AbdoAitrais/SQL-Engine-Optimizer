@@ -5,6 +5,9 @@ import java.util.ArrayList;
 public class Projection extends Node{
     ArrayList<Column> columns;
 
+    public ArrayList<Column> getColumns() {
+        return columns;
+    }
     public Projection(Node left, ArrayList<Column> columns) {
         super(left);
         this.columns = columns;

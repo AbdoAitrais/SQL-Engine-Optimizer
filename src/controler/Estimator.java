@@ -17,19 +17,19 @@ public class Estimator {
         if (isJoin(leaf)){
             Jointure join = (Jointure) leaf;
             switch (join.getAlgorithm()){
-                case Algorithms.BIB -> {
+                case Algorithms.BIB : {
                     return boucleImbriqueBlocs(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
-                case Algorithms.BII -> {
+                case Algorithms.BII : {
                     return boucleImbriqueIndex(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
-                case Algorithms.JH -> {
+                case Algorithms.JH : {
                     return jointureHashage(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
-                case Algorithms.JTF -> {
+                case Algorithms.JTF : {
                     return jointureTriFusion(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
-                case Algorithms.PJ -> {
+                case Algorithms.PJ : {
                     return preJointure(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
                 }
             }
@@ -38,13 +38,13 @@ public class Estimator {
             Entity entity = Dictionnary.findEntityByTableName(selection.getTable().getName());
             assert entity != null;
             switch (selection.getAlgorithm()){
-                case Algorithms.SE -> {
+                case Algorithms.SE : {
                     return selectionEgaliteHashage(selection) + coutAvecMaterialisation(leaf.getLeft());
                 }
-                case Algorithms.SB -> {
+                case Algorithms.SB : {
                     return selectionBalayage(selection.getLeft().NbrLignes(),entity) + coutAvecMaterialisation(leaf.getLeft());
                 }
-                case Algorithms.SNUK -> {
+                case Algorithms.SNUK : {
                     return selectionCleUnique(selection) + coutAvecMaterialisation(leaf.getLeft());
                 }
             }

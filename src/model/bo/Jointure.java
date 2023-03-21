@@ -5,13 +5,30 @@ import model.utilities.Algorithms;
 
 public class Jointure extends Node{
     String condition;
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
     String algorithm;
     Table table1;
     Table table2;
 
+    public void setTable2(Table table2) {
+        this.table2 = table2;
+    }
+
+    public void setTable1(Table tab1) {
+        this.table1 = tab1;
+    }
+    
     public Jointure(String condition) {
         this.condition = condition;
     }
+
     public Jointure(String condition, Table table1, Table table2) {
         super(new Relation(table1),new Relation(table2));
         this.table1 = table1;
@@ -47,6 +64,7 @@ public class Jointure extends Node{
     public String toString() {
         if (algorithm != null)
             return "⋈ " + algorithm;
+        // return "⋈ " + condition ;
         return "⋈" ;
     }
 
@@ -58,19 +76,19 @@ public class Jointure extends Node{
     @Override
     public double cost() {
         switch (algorithm){
-            case Algorithms.BIB -> {
+            case Algorithms.BIB : {
                 return Estimator.boucleImbriqueBlocs(this);
             }
-            case Algorithms.BII -> {
+            case Algorithms.BII : {
                 return Estimator.boucleImbriqueIndex(this);
             }
-            case Algorithms.JH -> {
+            case Algorithms.JH : {
                 return Estimator.jointureHashage(this);
             }
-            case Algorithms.JTF -> {
+            case Algorithms.JTF : {
                 return Estimator.jointureTriFusion(this);
             }
-            case Algorithms.PJ -> {
+            case Algorithms.PJ : {
                 return Estimator.preJointure(this);
             }
         }

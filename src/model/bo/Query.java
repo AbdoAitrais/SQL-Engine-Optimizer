@@ -1,12 +1,12 @@
 package model.bo;
 
-import controler.Optimizer;
 import model.exceptions.InvalidSQLException;
 import model.exceptions.TableNotExistException;
 
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Vector;
+import controler.Optimizer;
 
 public class Query {
     private static final String JOINTURE = "Jointure";

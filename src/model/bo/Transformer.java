@@ -2,6 +2,7 @@ package model.bo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class Transformer {
     public List<Node> logicalTrees;
@@ -133,22 +134,45 @@ public class Transformer {
         return leaf;
     }
     public void createVaraiantsTree(Node leaf){
-        logicalTrees.add(ESUse(clone(leaf)));
-        logicalTrees.add(SCUse(clone(leaf)));
-        logicalTrees.add(JAUse(clone(leaf)));
-        logicalTrees.add(JCUse(clone(leaf)));
-        logicalTrees.add(CPJUse(clone(leaf)));
-        logicalTrees.add(CJSUse(clone(leaf)));
+        Node arbre;            
+        arbre = ESUse(clone(leaf));
+        if(!existe(logicalTrees, arbre)) { System.out.println("IN ESU"); logicalTrees.add(arbre); }
+        arbre = SCUse(clone(leaf));
+        if(!existe(logicalTrees, arbre)) { System.out.println("IN SCUse"); logicalTrees.add(arbre); }
+        arbre = JAUse(clone(leaf));
+        if(!existe(logicalTrees, arbre)) { System.out.println("IN JAUse"); logicalTrees.add(arbre); }
+        arbre = JCUse(clone(leaf));
+        // System.out.println("table left "+arbre.getLeft().getLeft().toString());
+        // System.out.println("table right "+arbre.getLeft().getRight().toString());
+        // if(!existe(logicalTrees, arbre)) { System.out.println("IN JCUse"); logicalTrees.add(arbre); }
+        // arbre = CPJUse(clone(leaf));
+        if(!existe(logicalTrees, arbre)) { System.out.println("IN CPJUse"); logicalTrees.add(arbre); }
+        arbre = CJSUse(clone(leaf));
+        if(!existe(logicalTrees, arbre)) { System.out.println("IN CJSUse"); logicalTrees.add(arbre); }
+        
+        System.out.println("I am called");
+         
     }
-    public void generateVariantTrees(Node originalTree){
-        createVaraiantsTree(originalTree);
 
-        List<Node> temp = new ArrayList<>(logicalTrees);
-        for (Node node:temp) {
-            createVaraiantsTree(node);
+
+    
+
+
+    public void generateVariantTrees(Node originalTree){
+        createVaraiantsTree(originalTree);              
+        // logicalTrees.add(originalTree);
+        for (int index = 0; index < logicalTrees.size(); index++) {            
+            System.out.println("size ++++++"+logicalTrees.size()+"  iteration ====> "+index);
+            createVaraiantsTree(logicalTrees.get(index));
         }
-        logicalTrees.add(clone(originalTree));
+        
+        
     }
+
+    // public void generateVariantTrees(){
+    //     logicalTrees.add(clone(mainRoot));
+    //     createVaraiantsTree(mainRoot);
+    // }
 
     private void createVariantsForTree(Node node) {
         nodesProcessed = 0;
@@ -366,6 +390,128 @@ public class Transformer {
 //        temp.left = nd;
 //        return temp;
 //    }
+
+
+
+
+
+
+
+
+
+
+public  boolean is_same(Node node1, Node node2) {
+    Stack<Node> stack1 = new Stack<>();
+    Stack<Node> stack2 = new Stack<>();
+    
+    // Vérifier si les deux arbres sont vides
+    if (node1 == null && node2 == null) {
+        return true;
+    }
+    // Si l'un des arbres est vide, alors les arbres sont différents
+    if (node1 == null || node2 == null) {
+        return false;
+    }
+    
+    // Empiler les racines des deux arbres sur les piles respectives
+    stack1.push(node1);
+    stack2.push(node2);
+    
+    // Parcourir les deux arbres de manière itérative en utilisant des piles
+    while (!stack1.isEmpty() && !stack2.isEmpty()) {
+        // Dépiler les nœuds courants
+    	Node curr1 = stack1.pop();
+    	Node curr2 = stack2.pop();
+        
+        // Si les valeurs des nœuds courants sont différentes, alors les arbres sont différents
+        // if(isJoin(curr1) && isJoin(curr2))
+        // {
+        //     // if (!curr1.getContenu().equals(curr2.get())) {
+        //         if(!(((Jointure)(curr1)).toString().equals(((Jointure)(curr2)).toString())))
+        //         {
+        //             System.out.println("1) not same"+((Jointure)(curr1)).toString());
+        //             return false;
+        //         }
+        //         if(!(((Jointure)(curr1)).getLeft().toString().equals(((Jointure)(curr2)).getLeft().toString())))
+        //         {
+        //             System.out.println("2) not same"+((Jointure)(curr1)).getLeft().toString());
+        //             System.out.println("2) not same"+((Jointure)(curr2)).getLeft().toString());
+        //             return false;
+        //         }
+        //         if(!(((Jointure)(curr1)).getRight().toString().equals(((Jointure)(curr2)).getRight().toString())))
+        //         {
+        //             System.out.println("3) not same"+((Jointure)(curr1)).getRight().toString());
+        //             System.out.println("3) not same"+((Jointure)(curr2)).getRight().toString());
+        //             return false;
+        //         }
+                
+        // }
+        // if(isSelect(curr1) &&   isSelect(curr2))
+        // {
+        //     if(!(((Selection)(curr1)).condition.equals(((Selection)(curr2)).condition)))
+        //             return false;   
+        // }
+
+        // if(!(((Jointure)(curr1)).getLeft().toString().equals(((Jointure)(curr2)).getLeft().toString()))))
+           if(!curr1.toString().equals(curr2.toString())) 
+           {
+                System.out.println("3) not same"+(curr1.toString()));
+                System.out.println("3) not same"+(curr2.toString()));
+                return false;
+            }
+        
+        // Empiler les nœuds enfants gauche et droit des deux arbres sur les piles respectives
+        if (curr1.getLeft() != null && curr2.getLeft() != null) {
+            stack1.push(curr1.getLeft());
+            stack2.push(curr2.getLeft());
+        } else if (curr1.getLeft() != null || curr2.getLeft() != null) {
+            return false;
+        }
+        if (curr1.getRight() != null && curr2.getRight() != null) {
+            stack1.push(curr1.getRight());
+            stack2.push(curr2.getRight());
+        } else if (curr1.getRight() != null || curr2.getRight() != null) {
+            return false;
+        }
+    }
+    
+    // Vérifier si les deux piles sont vides
+    return stack1.isEmpty() && stack2.isEmpty();
+}
+
+public  boolean existe(List<Node>vecteur, Node arbre)
+{
+	for(Node n:vecteur)
+	{
+		if(is_same(n,arbre))
+			return true;
+	}
+	return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /******************** Physical Trees ********************/
     public void createAllPhysicalTrees(){
         physicalTrees = new ArrayList<>();

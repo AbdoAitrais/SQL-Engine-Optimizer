@@ -12,6 +12,18 @@ public class Selection extends Node{
     String condition;
     Table table;
 
+    public void setColName(String colName) {
+        this.colName = colName;
+    }
+    public void setSelectionValue(String selectionValue) {
+        this.selectionValue = selectionValue;
+    }
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+    public void setTable(Table table) {
+        this.table = table;
+    }
     public Selection(String condition) {
         this.condition = condition;
     }
@@ -76,14 +88,14 @@ public class Selection extends Node{
     @Override
     public double cost() {
         switch (algorithm){
-            case Algorithms.SE -> {
+            case Algorithms.SE : {
                 return Estimator.selectionEgaliteHashage(this);
             }
-            case Algorithms.SB -> {
+            case Algorithms.SB : {
                 Entity entity = Dictionnary.findEntityByTableName(table.getName());
                 return Estimator.selectionBalayage(left.NbrLignes(),entity);
             }
-            case Algorithms.SNUK -> {
+            case Algorithms.SNUK : {
                 return Estimator.selectionCleUnique(this);
             }
         }
