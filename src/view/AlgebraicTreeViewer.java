@@ -53,6 +53,7 @@ public class AlgebraicTreeViewer {
 
         frame = new JFrame("Algebraic Tree Viewer");
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         ArrayList<Node> logTrees = new ArrayList<>();
         ArrayList<Node> phylTrees = new ArrayList<>();
         for (LogicalTree node:transformer.logicalTrees) {
@@ -88,8 +89,8 @@ public class AlgebraicTreeViewer {
         TreeList logicalTrees = new TreeList(logTrees);
         TreeList physicalTrees = new TreeList(phylTrees);
         JTabbedPane graphicTrees = new JTabbedPane();
-        graphicTrees.addTab("Logical Trees",null,logicalTrees);
-        graphicTrees.addTab("Physical Trees",null,physicalTrees);
+        graphicTrees.addTab(logTrees.size()+" Logical Trees",null,logicalTrees);
+        graphicTrees.addTab(phylTrees.size()+" Physical Trees",null,physicalTrees);
 
         frame.getContentPane().add(graphicTrees);
         
