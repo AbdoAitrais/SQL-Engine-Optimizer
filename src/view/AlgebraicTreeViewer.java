@@ -1,6 +1,7 @@
 package view;
 
 import controler.Estimator;
+
 import controler.Optimizer;
 import model.bo.LogicalTree;
 import model.bo.Node;
@@ -22,28 +23,24 @@ public class AlgebraicTreeViewer {
     
     static String query;
     JFrame  frame;
-    Node minLogical = null;
-    Node minPhysical = null;
-    double minMatValue;
-    double minPipeValue;
     public AlgebraicTreeViewer(String req) throws InvalidSQLException, TableNotExistException
     {
         
         query  = req;
-        Optimizer optimizer = new Optimizer();
+        LogicalTree.SQLspliter sqlSpliter = new LogicalTree.SQLspliter();
         Estimator estimator = new Estimator();
         //  String query = "SELECT a.col1 as c, * FROM table1 as t1, table2 t2, table3 t3 WHERE t1.column4 = t3.col2 AND t1.column = 55";
         //String query = "SELECT * FROM Al as  A,Bl as B , Cib C, Derb D where A.id = B.id and B.age = 5 AND B.id = C.id AND C.name > 18";
         //String query =  "SELECT country from employees emp, department dep where emp.department_id = dep.department_id ";
         //String query =  "SELECT country from employees emp, where  country='631' and salary > 1000";
 
-        optimizer.queryComponentExtraction(query);
+        sqlSpliter.queryComponentExtraction(query);
 
         System.out.println();
         System.out.println();
 
-        optimizer.getQuery().createTree();
-        Transformer transformer = new Transformer(optimizer.getQuery().getRoot());
+        sqlSpliter.getQuery().createTree();
+        Transformer transformer = new Transformer(sqlSpliter.getQuery().getRoot());
         transformer.generateVariantTrees(transformer.mainRoot);
         transformer.createAllPhysicalTrees();
 
@@ -67,49 +64,15 @@ public class AlgebraicTreeViewer {
 
         System.out.println(estimator.coutAvecMaterialisation(transformer.logicalTrees.get(0).getPhysicalTrees().get(0)));
 
-        minMatValue = Double.MAX_VALUE;
-        for (LogicalTree logicalTree: transformer.logicalTrees){
-            Hashtable<Node,Double> pt = estimator.calculateCostMaterialization(logicalTree);
-
-            double min = Collections.min(pt.values());
-            System.out.println(min);
-            if (min < minMatValue){
-                minMatValue = min;
-                minLogical = logicalTree.getLogicalTree();
-                for (Map.Entry<Node, Double> entry : pt.entrySet()) {
-                    if (entry.getValue().equals(min)) {
-                        minPhysical = entry.getKey();
-                        break; // stop searching once we find the first key associated with the value
-                    }
-                }
-            }
-        }
-
-        minPipeValue = Double.MAX_VALUE;
-        for (LogicalTree logicalTree: transformer.logicalTrees){
-            Hashtable<Node,Double> pt = estimator.calculateCostPipelinage(logicalTree);
-
-            double min = Collections.min(pt.values());
-            System.out.println(min);
-            if (min < minPipeValue){
-                minPipeValue = min;
-                minLogical = logicalTree.getLogicalTree();
-                for (Map.Entry<Node, Double> entry : pt.entrySet()) {
-                    if (entry.getValue().equals(min)) {
-                        minPhysical = entry.getKey();
-                        break; // stop searching once we find the first key associated with the value
-                    }
-                }
-            }
-        }
-
-        System.out.println("minimum Cost : "+minPipeValue);
+        Optimizer optimizer = new Optimizer(estimator,transformer);
+        optimizer.calculateOptimalTree();
+        System.out.println("minimum Cost : "+optimizer.getMinMatValue());
 
         TreeList logicalTrees = new TreeList(logTrees);
         TreeList physicalTrees = new TreeList(phylTrees);
         JTabbedPane graphicTrees = new JTabbedPane();
-        graphicTrees.addTab("Logical Trees",null,logicalTrees);
-        graphicTrees.addTab("Physical Trees",null,physicalTrees);
+        graphicTrees.addTab(transformer.logicalTrees.size()+" Logical Trees",null,logicalTrees);
+        graphicTrees.addTab(phylTrees.size()+" Physical Trees",null,physicalTrees);
 
         frame.getContentPane().add(graphicTrees);
         
@@ -125,7 +88,7 @@ public class AlgebraicTreeViewer {
         frame.setSize(700,500);
         frame.setVisible(true);
 
-        new Optimalinformations(minLogical, minPhysical,minPipeValue,minMatValue);
+        new Optimalinformations(optimizer.getMinLogical(), optimizer.getMinPhysical(), optimizer.getMinPipeValue(),optimizer.getMinMatValue());
         
 
     }

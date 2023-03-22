@@ -1,13 +1,11 @@
 package model.bo;
 
-import model.dictionnary.Dictionnary;
 import model.exceptions.InvalidSQLException;
 import model.exceptions.TableNotExistException;
 
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Vector;
-import controler.Optimizer;
 
 public class Query {
     private static final String JOINTURE = "Jointure";
@@ -55,7 +53,7 @@ public class Query {
     private String getAliasFromCondition(String conditionColumn){
 
         if (conditionColumn.contains(".")){
-            return conditionColumn.split(Optimizer.POINT_PATTERN)[0];
+            return conditionColumn.split(LogicalTree.SQLspliter.POINT_PATTERN)[0];
         }
         return "";
     }

@@ -1,87 +1,76 @@
 package controler;
 
-import model.bo.Column;
-import model.bo.Query;
-import model.bo.Table;
-import model.exceptions.InvalidSQLException;
+import model.bo.LogicalTree;
+import model.bo.Node;
 
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.xml.crypto.dsig.TransformService;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class Optimizer {
-    public static final String SELECT_PATTERN = "(?i)\\s*SELECT\\s+(.*?)\\s+FROM";
-    public static final String FROM_NO_WHERE_PATTERN = "(?i)\\s*FROM\\s+(.*?)\\s+";
-    public static final String FROM_PATTERN = "(?i)\\s*FROM\\s+(.*?)\\s+WHERE";
-    public static final String WHERE_PATTERN = "(?i)\\s*WHERE\\s+(.*)";
-    public static final String LIST_PATTERN = "(\\s*,\\s*)";
-    public static final String ALIAS_PATTERN = "(?i)(\\s*as\\s*)|(\\s+)";
-    public static final String POINT_PATTERN = "(\\.)";
-    Query query;
+    Estimator estimator;
+    Transformer transformer;
+    double minMatValue;
+    double minPipeValue;
+    Node minLogical;
+    Node minPhysical;
 
-    public Query getQuery() {
-        return query;
+    public double getMinMatValue() {
+        return minMatValue;
     }
 
-    private String[] removeAlias(String name){
-        return name.split(ALIAS_PATTERN);
-    }
-    private String splitOnPoint(String name){
-        String[] tokens = name.split(POINT_PATTERN);
-        String str = null;
-
-        if (tokens.length == 1){
-            str = tokens[0];
-        } else if (tokens.length == 2) {
-            str = tokens[1];
-        }
-        return str;
+    public double getMinPipeValue() {
+        return minPipeValue;
     }
 
-    public void queryComponentExtraction(String requete) throws InvalidSQLException {
-        Pattern columnPattern = Pattern.compile(SELECT_PATTERN,Pattern.CASE_INSENSITIVE);
-        Pattern tablePattern = Pattern.compile(FROM_PATTERN,Pattern.CASE_INSENSITIVE);
-        Pattern wherePattern = Pattern.compile(WHERE_PATTERN,Pattern.CASE_INSENSITIVE);
+    public Node getMinLogical() {
+        return minLogical;
+    }
 
-        Matcher columnMatcher = columnPattern.matcher(requete);
-        Matcher tableMatcher = tablePattern.matcher(requete);
-        Matcher whereMatcher = wherePattern.matcher(requete);
-        ArrayList<Column> columns = new ArrayList<>();
-        ArrayList<Table> tables = new ArrayList<>();
-        String whereClause = null;
+    public Node getMinPhysical() {
+        return minPhysical;
+    }
 
+    public Optimizer(Estimator estimator, Transformer transformer){
+        this.estimator = estimator;
+        this.transformer = transformer;
+    }
+    public void calculateOptimalTree(){
+        minMatValue = Double.MAX_VALUE;
+        for (LogicalTree logicalTree: transformer.logicalTrees){
+            Hashtable<Node,Double> pt = estimator.calculateCostMaterialization(logicalTree);
 
-
-        if (columnMatcher.find() && tableMatcher.find()) {
-            String[] columnsWithAlias = columnMatcher.group(1).split(LIST_PATTERN);
-            String[] tablesWithAlias = tableMatcher.group(1).split(LIST_PATTERN);
-
-            for (String tableWithAlias : tablesWithAlias) {
-                String[] table = removeAlias(tableWithAlias);
-                if (table.length == 1)
-                    tables.add(new Table(table[0],""));
-                else
-                    tables.add(new Table(table[0],table[1]));
+            double min = Collections.min(pt.values());
+            System.out.println(min);
+            if (min < minMatValue){
+                minMatValue = min;
+                minLogical = logicalTree.getLogicalTree();
+                for (Map.Entry<Node, Double> entry : pt.entrySet()) {
+                    if (entry.getValue().equals(min)) {
+                        minPhysical = entry.getKey();
+                        break; // stop searching once we find the first key associated with the value
+                    }
+                }
             }
-
-            for (String columnWithAlias : columnsWithAlias) {
-                String[] column = removeAlias(columnWithAlias);
-                if (column.length == 1)
-                    columns.add(new Column(splitOnPoint(column[0]),""));
-                else
-                    columns.add(new Column(splitOnPoint(column[0]),column[1]));
-            }
-
-
-            if (whereMatcher.find()) {
-                whereClause = whereMatcher.group(1);
-            }else {
-                System.out.println("No WHERE conditions found");
-            }
-        }else {
-            throw new InvalidSQLException();
         }
 
-        query = new Query(columns,tables,whereClause);
+        minPipeValue = Double.MAX_VALUE;
+        for (LogicalTree logicalTree: transformer.logicalTrees){
+            Hashtable<Node,Double> pt = estimator.calculateCostPipelinage(logicalTree);
+
+            double min = Collections.min(pt.values());
+            System.out.println(min);
+            if (min < minPipeValue){
+                minPipeValue = min;
+                minLogical = logicalTree.getLogicalTree();
+                for (Map.Entry<Node, Double> entry : pt.entrySet()) {
+                    if (entry.getValue().equals(min)) {
+                        minPhysical = entry.getKey();
+                        break; // stop searching once we find the first key associated with the value
+                    }
+                }
+            }
+        }
     }
 }

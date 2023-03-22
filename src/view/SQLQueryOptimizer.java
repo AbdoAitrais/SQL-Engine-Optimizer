@@ -20,7 +20,7 @@ public class SQLQueryOptimizer extends JFrame {
     AlgebraicTreeViewer algebraicTreeViewer = null;
 
     public SQLQueryOptimizer() {
-        setTitle("SQL Query Optimizer");
+        setTitle("SQL Query SQLspliter");
         setSize(600, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
