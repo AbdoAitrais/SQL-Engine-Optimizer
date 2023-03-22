@@ -18,6 +18,11 @@ public class Estimator {
             return 0.0;
         return leaf.cost() + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
     }
+
+
+
+
+
     public double coutAvecPipelinage(Node node) {
         if (node == null)
             return 0.0;

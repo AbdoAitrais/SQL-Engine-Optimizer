@@ -36,7 +36,6 @@ public class AlgebraicTreeViewer {
         //String query =  "SELECT country from employees emp, department dep where emp.department_id = dep.department_id ";
         //String query =  "SELECT country from employees emp, where  country='631' and salary > 1000";
 
-
         optimizer.queryComponentExtraction(query);
 
         System.out.println();
@@ -62,8 +61,8 @@ public class AlgebraicTreeViewer {
         for (LogicalTree node:transformer.logicalTrees) {
             phylTrees.addAll(node.getPhysicalTrees());
         }
-        System.out.println("Logical Trees : "+transformer.logicalTrees.size());
-        System.out.println("Physical Trees : "+phylTrees.size());
+        System.out.println("Logical Trees : " +transformer.logicalTrees.size());
+        System.out.println("Physical Trees : " +phylTrees.size());
 
         System.out.println(estimator.coutAvecMaterialisation(transformer.logicalTrees.get(0).getPhysicalTrees().get(0)));
 
@@ -90,7 +89,6 @@ public class AlgebraicTreeViewer {
         TreeList logicalTrees = new TreeList(logTrees);
         TreeList physicalTrees = new TreeList(phylTrees);
         JTabbedPane graphicTrees = new JTabbedPane();
-
         graphicTrees.addTab("Logical Trees",null,logicalTrees);
         graphicTrees.addTab("Physical Trees",null,physicalTrees);
 
@@ -98,15 +96,17 @@ public class AlgebraicTreeViewer {
         
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
-                
+            public void windowClosing(WindowEvent e) {                
                 frame.dispose();
                 frame = null;
             }
         });
+
         frame.pack();
         frame.setSize(700,500);
         frame.setVisible(true);
+
+        new Optimalinformations(minLogical, minPhysical,minValue,minValue);
         
 
     }
