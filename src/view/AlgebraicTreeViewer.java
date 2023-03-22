@@ -4,7 +4,7 @@ import controler.Estimator;
 import controler.Optimizer;
 import model.bo.LogicalTree;
 import model.bo.Node;
-import model.bo.Transformer;
+import controler.Transformer;
 import model.dictionnary.Dictionnary;
 import model.exceptions.InvalidSQLException;
 import model.exceptions.TableNotExistException;
@@ -24,7 +24,8 @@ public class AlgebraicTreeViewer {
     JFrame  frame;
     Node minLogical = null;
     Node minPhysical = null;
-    double minValue;
+    double minMatValue;
+    double minPipeValue;
     public AlgebraicTreeViewer(String req) throws InvalidSQLException, TableNotExistException
     {
         
@@ -65,15 +66,16 @@ public class AlgebraicTreeViewer {
         System.out.println("Logical Trees : " +transformer.logicalTrees.size());
         System.out.println("Physical Trees : " +phylTrees.size());
 
+        System.out.println(estimator.coutAvecMaterialisation(transformer.logicalTrees.get(0).getPhysicalTrees().get(0)));
 
-        minValue = Double.MAX_VALUE;
+        minMatValue = Double.MAX_VALUE;
         for (LogicalTree logicalTree: transformer.logicalTrees){
             Hashtable<Node,Double> pt = estimator.calculateCostMaterialization(logicalTree);
 
             double min = Collections.min(pt.values());
             System.out.println(min);
-            if (min < minValue){
-                minValue = min;
+            if (min < minMatValue){
+                minMatValue = min;
                 minLogical = logicalTree.getLogicalTree();
                 for (Map.Entry<Node, Double> entry : pt.entrySet()) {
                     if (entry.getValue().equals(min)) {
@@ -84,7 +86,25 @@ public class AlgebraicTreeViewer {
             }
         }
 
-        System.out.println("minimum Cost : "+minValue);
+        minPipeValue = Double.MAX_VALUE;
+        for (LogicalTree logicalTree: transformer.logicalTrees){
+            Hashtable<Node,Double> pt = estimator.calculateCostPipelinage(logicalTree);
+
+            double min = Collections.min(pt.values());
+            System.out.println(min);
+            if (min < minPipeValue){
+                minPipeValue = min;
+                minLogical = logicalTree.getLogicalTree();
+                for (Map.Entry<Node, Double> entry : pt.entrySet()) {
+                    if (entry.getValue().equals(min)) {
+                        minPhysical = entry.getKey();
+                        break; // stop searching once we find the first key associated with the value
+                    }
+                }
+            }
+        }
+
+        System.out.println("minimum Cost : "+minPipeValue);
 
         TreeList logicalTrees = new TreeList(logTrees);
         TreeList physicalTrees = new TreeList(phylTrees);
@@ -106,7 +126,7 @@ public class AlgebraicTreeViewer {
         frame.setSize(700,500);
         frame.setVisible(true);
 
-        new Optimalinformations(minLogical, minPhysical,minValue,minValue);
+        new Optimalinformations(minLogical, minPhysical,minPipeValue,minMatValue);
         
 
     }

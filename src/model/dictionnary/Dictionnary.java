@@ -39,16 +39,21 @@ public class Dictionnary {
                 int Nt = Integer.parseInt(infos[1]);
                 int tailleLigneT = Integer.parseInt(infos[2]);
                 int FBT = Integer.parseInt(infos[3]);
-                String[] colonne = infos[4].split(",");
+
 
 
                 List<MetaColumn> metaColumn = new ArrayList<MetaColumn>();
-                metaColumn.add(new MetaColumn(  colonne[0],
-                        Integer.parseInt(colonne[1]),
-                        Integer.parseInt(colonne[2]),
-                        Integer.parseInt(colonne[3])
-                ));
+                for (int i = 4; i < infos.length; i++) {
+                    String[] colonne = infos[i].split(",");
+                    metaColumn.add(new MetaColumn(  colonne[0],
+                            Integer.parseInt(colonne[1]),
+                            Integer.parseInt(colonne[2]),
+                            Integer.parseInt(colonne[3])
+                    ));
+                }
+
                 entities.add(new Entity(table,Nt,tailleLigneT,FBT,metaColumn));
+                System.out.println(entities.get(0).metaColumns.size());
             }
         } catch(IOException e) {
             System.err.println(e.getClass() + " : " + e.getMessage());
