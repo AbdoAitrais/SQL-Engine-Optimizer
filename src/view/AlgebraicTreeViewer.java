@@ -13,7 +13,6 @@ import javax.swing.*;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -36,7 +35,6 @@ public class AlgebraicTreeViewer {
         //String query = "SELECT * FROM Al as  A,Bl as B , Cib C, Derb D where A.id = B.id and B.age = 5 AND B.id = C.id AND C.name > 18";
         //String query =  "SELECT country from employees emp, department dep where emp.department_id = dep.department_id ";
         //String query =  "SELECT country from employees emp, where  country='631' and salary > 1000";
-
 
         optimizer.queryComponentExtraction(query);
 
@@ -63,8 +61,8 @@ public class AlgebraicTreeViewer {
         for (LogicalTree node:transformer.logicalTrees) {
             phylTrees.addAll(node.getPhysicalTrees());
         }
-        System.out.println("Logical Trees : "+transformer.logicalTrees.size());
-        System.out.println("Physical Trees : "+phylTrees.size());
+        System.out.println("Logical Trees : " +transformer.logicalTrees.size());
+        System.out.println("Physical Trees : " +phylTrees.size());
 
 
         minValue = Double.MAX_VALUE;
@@ -90,7 +88,6 @@ public class AlgebraicTreeViewer {
         TreeList logicalTrees = new TreeList(logTrees);
         TreeList physicalTrees = new TreeList(phylTrees);
         JTabbedPane graphicTrees = new JTabbedPane();
-
         graphicTrees.addTab("Logical Trees",null,logicalTrees);
         graphicTrees.addTab("Physical Trees",null,physicalTrees);
 
@@ -98,15 +95,17 @@ public class AlgebraicTreeViewer {
         
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
-                
+            public void windowClosing(WindowEvent e) {                
                 frame.dispose();
                 frame = null;
             }
         });
+
         frame.pack();
         frame.setSize(700,500);
         frame.setVisible(true);
+
+        new Optimalinformations(minLogical, minPhysical,minValue,minValue);
         
 
     }
