@@ -16,42 +16,7 @@ public class Estimator {
     public double coutAvecMaterialisation(Node leaf){
         if (leaf == null)
             return 0.0;
-        if (isJoin(leaf)){
-            Jointure join = (Jointure) leaf;
-            switch (join.getAlgorithm()){
-                case Algorithms.BIB : {
-                    return boucleImbriqueBlocs(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
-                }
-                case Algorithms.BII : {
-                    return boucleImbriqueIndex(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
-                }
-                case Algorithms.JH : {
-                    return jointureHashage(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
-                }
-                case Algorithms.JTF : {
-                    return jointureTriFusion(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
-                }
-                case Algorithms.PJ : {
-                    return preJointure(join) + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
-                }
-            }
-        }else if (isSelect(leaf)){
-            Selection selection = (Selection) leaf;
-            Entity entity = Dictionnary.findEntityByTableName(selection.getTable().getName());
-            assert entity != null;
-            switch (selection.getAlgorithm()){
-                case Algorithms.SE : {
-                    return selectionEgaliteHashage(selection) + coutAvecMaterialisation(leaf.getLeft());
-                }
-                case Algorithms.SB : {
-                    return selectionBalayage(selection.getLeft().NbrLignes(),entity) + coutAvecMaterialisation(leaf.getLeft());
-                }
-                case Algorithms.SNUK : {
-                    return selectionCleUnique(selection) + coutAvecMaterialisation(leaf.getLeft());
-                }
-            }
-        }
-        return coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
+        return leaf.cost() + coutAvecMaterialisation(leaf.getLeft()) + coutAvecMaterialisation(leaf.getRight());
     }
     public double coutAvecPipelinage(Node node) {
         if (node == null)

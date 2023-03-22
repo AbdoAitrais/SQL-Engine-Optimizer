@@ -1,6 +1,7 @@
-package model.bo;
+package controler;
 
 import controler.Estimator;
+import model.bo.*;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -16,24 +17,24 @@ public class Transformer {
     public Node clone(Node leaf) {
         Node newNode = null;
         if (isJoin(leaf)){
-            newNode = new Jointure(((Jointure) leaf).condition,new Table(((Jointure) leaf).table1),new Table(((Jointure) leaf).table2));
+            newNode = new Jointure(((Jointure) leaf).getCondition(),new Table(((Jointure) leaf).getTable1()),new Table(((Jointure) leaf).getTable2()));
 
         }
         else if (isSelect(leaf)){
-            newNode = new Selection(((Selection) leaf).condition,((Selection) leaf).table);
+            newNode = new Selection(((Selection) leaf).getCondition(),((Selection) leaf).getTable());
         }
         else if (isProject(leaf)){
-            newNode = new Projection(((Projection) leaf).left,((Projection) leaf).columns);
+            newNode = new Projection(((Projection) leaf).getLeft(),((Projection) leaf).getColumns());
         } else if (isCartesianProduct(leaf)) {
-            newNode = new Cartesianproduct(leaf.left,leaf.right);
+            newNode = new Cartesianproduct(leaf.getLeft(),leaf.getRight());
         }else {
-            newNode = new Relation(((Relation) leaf).table);
+            newNode = new Relation(((Relation) leaf).getTable());
         }
-        if (leaf.left != null) {
-            newNode.left = clone(leaf.left);
+        if (leaf.getLeft() != null) {
+            newNode.setLeft( clone(leaf.getLeft()));
         }
-        if (leaf.right != null) {
-            newNode.right = clone(leaf.right);
+        if (leaf.getRight() != null) {
+            newNode.setRight( clone(leaf.getRight()));
         }
         return newNode;
     }
@@ -93,20 +94,20 @@ public class Transformer {
     public Node ESUse(Node leaf)
     {
         if (leaf != null){
-            if (isSelect(leaf) && isSelect(leaf.left)){
+            if (isSelect(leaf) && isSelect(leaf.getLeft())){
                 leaf = ES(leaf);
                 ESUse(leaf);
             }
-            ESUse(leaf.left);
-            ESUse(leaf.right);
+            ESUse(leaf.getLeft());
+            ESUse(leaf.getRight());
         }
         return leaf;
     }
     public Node ES(Node leaf){
-        if (isSelect(leaf) && isSelect(leaf.left)){
+        if (isSelect(leaf) && isSelect(leaf.getLeft())){
             Selection temp = (Selection) leaf;
-            temp.condition += " and " + ((Selection) temp.left).condition;
-            temp.left = temp.left.left;
+            temp.setCondition(temp.getCondition() + " and " + ((Selection) temp.getLeft()).getCondition());
+            temp.setLeft( temp.getLeft().getLeft());
             return temp;
         }
         return leaf;
@@ -116,9 +117,9 @@ public class Transformer {
     {
         if (isJoin(nd))
         {
-            Node temp = nd.left;
-            nd.left = nd.right;
-            nd.right = temp;
+            Node temp = nd.getLeft();
+            nd.setLeft(nd.getRight());
+            nd.setRight( temp);
         }
         return nd;
     }
@@ -129,8 +130,8 @@ public class Transformer {
                 leaf = JC(leaf);
             }
             else {
-                JCUse(leaf.left);
-                JCUse(leaf.right);
+                JCUse(leaf.getLeft());
+                JCUse(leaf.getRight());
             }
         }
         return leaf;
@@ -139,44 +140,44 @@ public class Transformer {
 
     public Node SCUse(Node leaf)// does not work very well miss something I don't fucking know
     {
-        if (leaf != null && leaf.left != null) {
+        if (leaf != null && leaf.getLeft() != null) {
             leaf = SC(leaf);
-            SCUse(leaf.left);
-            SCUse(leaf.right);
+            SCUse(leaf.getLeft());
+            SCUse(leaf.getRight());
         }
         return leaf;
     }
     public Node SC(Node nd)
     {
-        if (isSelect(nd.left) && isSelect(nd.left.left)){
-            Node temp = nd.left;
-            nd.left = temp.left;
-            temp.left = nd.left.left;
-            nd.left.left = temp;
+        if (isSelect(nd.getLeft()) && isSelect(nd.getLeft().getLeft())){
+            Node temp = nd.getLeft();
+            nd.setLeft(temp.getLeft());
+            temp.setLeft( nd.getLeft().getLeft());
+            nd.getLeft().setLeft(temp);
         }
         return nd;
     }
 
     public Node JA(Node nd) // T1 join (T2 join T3) ==>  (T1 join T2) join T3
     {
-        if ((isJoin(nd) && isJoin(nd.right)) || (isJoin(nd) && isJoin(nd.left))){
-            Node rightJoin  = nd.right; // save the right join (T2 join T3)
-            nd.right = rightJoin.right; // mainJoin took the T3 as right child
+        if ((isJoin(nd) && isJoin(nd.getRight())) || (isJoin(nd) && isJoin(nd.getLeft()))){
+            Node rightJoin  = nd.getRight(); // save the right join (T2 join T3)
+            nd.setRight( rightJoin.getRight()); // mainJoin took the T3 as right child
             // form the subJoin  now
-            rightJoin.right = rightJoin.left;//subJoin took the T2 as right child
-            rightJoin.left = nd.left;// //subJoin took the T1 as left child
-            nd.left = rightJoin;// the mainJoin took the subJoin as left child
+            rightJoin.setRight(rightJoin.getLeft());//subJoin took the T2 as right child
+            rightJoin.setLeft( nd.getLeft());// //subJoin took the T1 as left child
+            nd.setLeft(rightJoin);// the mainJoin took the subJoin as left child
         }
         return nd;
     }
     public Node JAUse(Node leaf)
     {
         if (leaf != null){
-            if (isJoin(leaf) && isJoin(leaf.right)) {
+            if (isJoin(leaf) && isJoin(leaf.getRight())) {
                 leaf = JA(leaf);
             }else{
-                JAUse(leaf.left);
-                JAUse(leaf.right);
+                JAUse(leaf.getLeft());
+                JAUse(leaf.getRight());
             }
 
         }
@@ -186,28 +187,28 @@ public class Transformer {
 
     public Node CJSUse(Node leaf)
     {
-        if (leaf != null && leaf.left != null) {
+        if (leaf != null && leaf.getLeft() != null) {
             leaf = CSJ(leaf);
-            CJSUse(leaf.left);
-            CJSUse(leaf.right);
+            CJSUse(leaf.getLeft());
+            CJSUse(leaf.getRight());
         }
 
         return leaf;
     }
     public Node CSJ(Node leaf) // e (T1 ⋈ T2) = e (T1) ⋈ T2
     {
-        Node select = leaf.left;
-        if (isSelect(leaf.left) && isJoin(leaf.left.left)){
-            Node join = select.left;
-            if (containsTable(join.right,((Selection) select).getTable())) {
-                select.left = join.right;
-                join.right = select;
+        Node select = leaf.getLeft();
+        if (isSelect(leaf.getLeft()) && isJoin(leaf.getLeft().getLeft())){
+            Node join = select.getLeft();
+            if (containsTable(join.getRight(),((Selection) select).getTable())) {
+                select.setLeft(join.getRight());
+                join.setRight( select);
             }else {
-                select.left = join.left;
-                join.left = select;
+                select.setLeft(join.getLeft());
+                join.setLeft( select);
             }
 
-            leaf.left= join;
+            leaf.setLeft( join);
         }
         return leaf;
     }
@@ -224,15 +225,15 @@ public class Transformer {
     {
         if(leaf != null)
         {
-            if (isProject(leaf) && isJoin(leaf.left))
+            if (isProject(leaf) && isJoin(leaf.getLeft()))
             {
                 // System.out.println("I found the case");
                 Projection pro = (Projection)leaf;
                 leaf = CPJ(pro);
             }
             else  {
-                CPJUse(leaf.left);
-                CPJUse(leaf.right);
+                CPJUse(leaf.getLeft());
+                CPJUse(leaf.getRight());
             }
         }
         // System.out.println("that's fucking null");
@@ -240,12 +241,12 @@ public class Transformer {
     }
     public Node CPJ(Projection nd)
     {
-        if(isProject(nd) && isJoin(nd.left)){
-            Node  joiNode = nd.left;
-            System.out.println(joiNode.left);
-            System.out.println(joiNode.right);
-            Projection leftProj = new Projection(joiNode.left,null);
-            Projection rightProj  = new Projection(joiNode.right,null);//rightProj.left = joiNode.right;
+        if(isProject(nd) && isJoin(nd.getLeft())){
+            Node  joiNode = nd.getLeft();
+            System.out.println(joiNode.getLeft());
+            System.out.println(joiNode.getRight());
+            Projection leftProj = new Projection(joiNode.getLeft(),null);
+            Projection rightProj  = new Projection(joiNode.getRight(),null);//rightProj.left = joiNode.right;
             System.out.println("I did the chainage");
 
             System.out.println(leftProj);
@@ -254,8 +255,8 @@ public class Transformer {
             System.out.println("leftProj = " +leftProj);
             System.out.println("rightProj = " +rightProj);
             System.out.println("infos");
-            joiNode.left  =leftProj  ;
-            joiNode.right =rightProj ;
+            joiNode.setLeft(leftProj);
+            joiNode.setRight(rightProj) ;
             return joiNode;
         }
         return nd;
@@ -343,8 +344,8 @@ public class Transformer {
             else if (isJoin(leaf)) {
                 ((Jointure) leaf).setAlgorithm(joinAlgo);
             }
-            createPhysicalTree(leaf.left,joinAlgo,selectAlgo);
-            createPhysicalTree(leaf.right,joinAlgo,selectAlgo);
+            createPhysicalTree(leaf.getLeft(),joinAlgo,selectAlgo);
+            createPhysicalTree(leaf.getRight(),joinAlgo,selectAlgo);
         }
         return leaf;
     }

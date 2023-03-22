@@ -19,7 +19,7 @@ public class Query {
     ArrayList<Table> tables;
     Vector<Jointure> jointures;
     static Vector<Selection> selections;
-    String whereClause;
+        String whereClause;
     Node root;
 
     public Node getRoot() {
@@ -85,7 +85,7 @@ public class Query {
             }else if (identifyConditionType(equation).equals(SELECTION)){
                 String operand = equation.split(OPERATORS_PATTERN)[0];
                 String value = equation.split(OPERATORS_PATTERN)[1];
-                Table table = null;
+                Table table;
                 table = getTableFromOperand(operand);
                 if (table == null)
                     throw new TableNotExistException();
@@ -178,28 +178,6 @@ public class Query {
             return unifyNodes(new Union(leaf,temp),nodes);
         }
         return leaf;
-    }
-    private void showNode(Node leaf,int niveau_courant)
-    {
-        //indice pour faire les espaces entre les niveaux
-        int ind;
-        //s'il y a des éléments dans l'arbre
-        if(leaf != null)
-        {
-            //on affiche d'abord l'arbre droit
-            showNode(leaf.right,niveau_courant+1);
-            // affichage des espaces entre les niveaux de l'arbre
-            for (ind = 0; ind < niveau_courant; ind++)
-                System.out.print("      ");
-            //affichage du noeud courant
-            System.out.println(leaf);
-            //on affiche l'arbre gauche
-            showNode(leaf.left,niveau_courant+1);
-        } else {
-            for (ind = 0; ind < niveau_courant; ind++)
-                System.out.print("      ");
-            System.out.println("~");
-        }
     }
 
 }

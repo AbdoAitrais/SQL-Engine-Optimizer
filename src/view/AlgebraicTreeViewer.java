@@ -4,7 +4,7 @@ import controler.Estimator;
 import controler.Optimizer;
 import model.bo.LogicalTree;
 import model.bo.Node;
-import model.bo.Transformer;
+import controler.Transformer;
 import model.dictionnary.Dictionnary;
 import model.exceptions.InvalidSQLException;
 import model.exceptions.TableNotExistException;
@@ -13,7 +13,6 @@ import javax.swing.*;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -66,6 +65,7 @@ public class AlgebraicTreeViewer {
         System.out.println("Logical Trees : "+transformer.logicalTrees.size());
         System.out.println("Physical Trees : "+phylTrees.size());
 
+        System.out.println(estimator.coutAvecMaterialisation(transformer.logicalTrees.get(0).getPhysicalTrees().get(0)));
 
         minValue = Double.MAX_VALUE;
         for (LogicalTree logicalTree: transformer.logicalTrees){
