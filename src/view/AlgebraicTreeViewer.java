@@ -51,6 +51,7 @@ public class AlgebraicTreeViewer {
 
         frame = new JFrame("Algebraic Tree Viewer");
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         ArrayList<Node> logTrees = new ArrayList<>();
         ArrayList<Node> phylTrees = new ArrayList<>();
         for (LogicalTree node:transformer.logicalTrees) {

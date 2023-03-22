@@ -23,7 +23,8 @@ public class Optimalinformations {
     
     public Optimalinformations(Node logic,Node physic,double pip, double mat) {
         
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         // create the two panels
         panel1 = new AlgebraicTreePanel(logic);
@@ -91,6 +92,7 @@ public class Optimalinformations {
 
         frame.pack();
         frame.setLocationRelativeTo(null); // center the frame on the screen
+        frame.setMinimumSize(new Dimension(999,500));
         frame.setVisible(true);
 
     }
