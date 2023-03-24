@@ -3,16 +3,12 @@ package model.bo;
 import java.util.Objects;
 
 public class Table {
-    private String name;
+    private final String name;
     private String alias;
     private Column[] columns;
     public Table(String name, String alias) {
         this.name = name;
         this.alias = alias;
-    }
-
-    public void setColumns(Column[] columns) {
-        this.columns = columns;
     }
 
     public Table(Table table){

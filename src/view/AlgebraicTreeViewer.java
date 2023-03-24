@@ -15,9 +15,7 @@ import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Map;
+
 
 public class AlgebraicTreeViewer {
     
@@ -29,7 +27,8 @@ public class AlgebraicTreeViewer {
         query  = req;
         LogicalTree.SQLspliter sqlSpliter = new LogicalTree.SQLspliter();
         Estimator estimator = new Estimator();
-        //  String query = "SELECT a.col1 as c, * FROM table1 as t1, table2 t2, table3 t3 WHERE t1.column4 = t3.col2 AND t1.column = 55";
+        //  String query = "SELECT a.col1 as c, * FROM table1 as t1, table2 t2, table3 t3 WHERE t1.col1 = t3.col2 AND t1.col2 = 55 and t3.col1 = t2.col2";
+        //  String query = "SELECT a.col1 as c, * FROM table1 as t1, table2 t2, table3 t3 WHERE t1.col1 = t3.col2 AND t1.col2 = 55 and t3.col1 = t2.col2 and t2.col2 = 26";
         //String query = "SELECT * FROM Al as  A,Bl as B , Cib C, Derb D where A.id = B.id and B.age = 5 AND B.id = C.id AND C.name > 18";
         //String query =  "SELECT country from employees emp, department dep where emp.department_id = dep.department_id ";
         //String query =  "SELECT country from employees emp, where  country='631' and salary > 1000";

@@ -24,10 +24,6 @@ public class Entity {
         return Nt;
     }
 
-    public int getTailleLigneT() {
-        return tailleLigneT;
-    }
-
     public int getFBT() {
         return FBT;
     }
@@ -38,10 +34,6 @@ public class Entity {
 
     public boolean isIndexSecondaire() {
         return indexSecondaire;
-    }
-
-    public List<MetaColumn> getMetaColumns() {
-        return metaColumns;
     }
 
     public Entity(Table table, int nt, int tailleLigneT, int FBT, List<MetaColumn> metaColumns) {

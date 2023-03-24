@@ -12,7 +12,6 @@ public class Projection extends Node{
         super(left);
         this.columns = columns;
     }
-    public Projection(){}
 
     @Override
     public String toString() {

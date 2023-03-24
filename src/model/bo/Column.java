@@ -1,8 +1,8 @@
 package model.bo;
 
 public class Column {
-    private String name;
-    private String alias;
+    private final String name;
+    private final String alias;
     private Table table;
     public Column(String name, String alias) {
         this.name = name;

@@ -1,10 +1,8 @@
 package controler;
 
-import controler.Estimator;
 import model.bo.*;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
@@ -68,15 +66,15 @@ public class Transformer {
     public void createVaraiantsTree(Node leaf){
         Node arbre;            
         arbre = ESUse(clone(leaf));
-        if(!existe(logicalTrees, arbre)) { System.out.println("IN ESU"); addLogicalTree(arbre); }
+        if(!exists(logicalTrees, arbre)) { System.out.println("IN ESU"); addLogicalTree(arbre); }
         arbre = SCUse(clone(leaf));
-        if(!existe(logicalTrees, arbre)) { System.out.println("IN SCUse"); addLogicalTree(arbre); }
+        if(!exists(logicalTrees, arbre)) { System.out.println("IN SCUse"); addLogicalTree(arbre); }
         arbre = JAUse(clone(leaf));
-        if(!existe(logicalTrees, arbre)) { System.out.println("IN JAUse"); addLogicalTree(arbre); }
+        if(!exists(logicalTrees, arbre)) { System.out.println("IN JAUse"); addLogicalTree(arbre); }
         arbre = JCUse(clone(leaf));
-        if(!existe(logicalTrees, arbre)) { System.out.println("IN CPJUse"); addLogicalTree(arbre); }
+        if(!exists(logicalTrees, arbre)) { System.out.println("IN CPJUse"); addLogicalTree(arbre); }
         arbre = CJSUse(clone(leaf));
-        if(!existe(logicalTrees, arbre)) { System.out.println("IN CJSUse"); addLogicalTree(arbre); }
+        if(!exists(logicalTrees, arbre)) { System.out.println("IN CJSUse"); addLogicalTree(arbre); }
         
         System.out.println("I am called");
          
@@ -221,47 +219,6 @@ public class Transformer {
         return node.toString().equals(table.getName());
     }
 
-    public Node CPJUse(Node leaf)
-    {
-        if(leaf != null)
-        {
-            if (isProject(leaf) && isJoin(leaf.getLeft()))
-            {
-                // System.out.println("I found the case");
-                Projection pro = (Projection)leaf;
-                leaf = CPJ(pro);
-            }
-            else  {
-                CPJUse(leaf.getLeft());
-                CPJUse(leaf.getRight());
-            }
-        }
-        // System.out.println("that's fucking null");
-        return leaf;
-    }
-    public Node CPJ(Projection nd)
-    {
-        if(isProject(nd) && isJoin(nd.getLeft())){
-            Node  joiNode = nd.getLeft();
-            System.out.println(joiNode.getLeft());
-            System.out.println(joiNode.getRight());
-            Projection leftProj = new Projection(joiNode.getLeft(),null);
-            Projection rightProj  = new Projection(joiNode.getRight(),null);//rightProj.left = joiNode.right;
-            System.out.println("I did the chainage");
-
-            System.out.println(leftProj);
-            System.out.println(rightProj);
-            //filter the columns but the columns is not related to a table in the column class
-            System.out.println("leftProj = " +leftProj);
-            System.out.println("rightProj = " +rightProj);
-            System.out.println("infos");
-            joiNode.setLeft(leftProj);
-            joiNode.setRight(rightProj) ;
-            return joiNode;
-        }
-        return nd;
-    }
-
     public  boolean is_same(Node node1, Node node2) {
         Stack<Node> stack1 = new Stack<>();
         Stack<Node> stack2 = new Stack<>();
@@ -310,7 +267,7 @@ public class Transformer {
         return stack1.isEmpty() && stack2.isEmpty();
     }
 
-    public  boolean existe(List<LogicalTree>vecteur, Node arbre)
+    public  boolean exists(List<LogicalTree>vecteur, Node arbre)
     {
         for(LogicalTree n:vecteur)
         {

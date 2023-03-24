@@ -1,6 +1,5 @@
 package model.dictionnary;
 
-import model.bo.Column;
 import model.bo.Table;
 
 import java.io.BufferedReader;
@@ -60,10 +59,10 @@ public class Dictionnary {
         }
     }
     public static double calculateTailleEntree(){
-        return (double) (Dictionnary.tailleCleIndex + Dictionnary.TailleDescripteurBloc);
+        return Dictionnary.tailleCleIndex + Dictionnary.TailleDescripteurBloc;
     }
     public double calculateOrder(){
-        return (double) (Dictionnary.TailleBloc - Dictionnary.TailleDescripteurBloc/calculateTailleEntree());
+        return Dictionnary.TailleBloc - Dictionnary.TailleDescripteurBloc/calculateTailleEntree();
     }
     public static double tempsESBloc(){
         return TempsTrans+TempsPasDebut;

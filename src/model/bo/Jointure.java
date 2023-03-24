@@ -9,22 +9,10 @@ public class Jointure extends Node{
         return condition;
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
     String algorithm;
     Table table1;
     Table table2;
 
-    public void setTable2(Table table2) {
-        this.table2 = table2;
-    }
-
-    public void setTable1(Table tab1) {
-        this.table1 = tab1;
-    }
-    
     public Jointure(String condition) {
         this.condition = condition;
     }
@@ -52,10 +40,6 @@ public class Jointure extends Node{
         this.table2 = table2;
     }
 
-    public String getAlgorithm() {
-        return algorithm;
-    }
-
     public void setAlgorithm(String algorithm) {
         this.algorithm = algorithm;
     }
@@ -75,20 +59,20 @@ public class Jointure extends Node{
 
     @Override
     public double cost() {
-        switch (algorithm){
-            case Algorithms.BIB : {
+        switch (algorithm) {
+            case Algorithms.BIB -> {
                 return Estimator.boucleImbriqueBlocs(this);
             }
-            case Algorithms.BII : {
+            case Algorithms.BII -> {
                 return Estimator.boucleImbriqueIndex(this);
             }
-            case Algorithms.JH : {
+            case Algorithms.JH -> {
                 return Estimator.jointureHashage(this);
             }
-            case Algorithms.JTF : {
+            case Algorithms.JTF -> {
                 return Estimator.jointureTriFusion(this);
             }
-            case Algorithms.PJ : {
+            case Algorithms.PJ -> {
                 return Estimator.preJointure(this);
             }
         }
